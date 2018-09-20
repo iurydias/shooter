@@ -264,6 +264,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 hearts[--remainingHearts].setImage();
             }
         }
+        //cvxcv
         for (int i = 0; i < numberOfBullets; i++) {
             if (bullets1[i].fired) {
                 for (int v = 0; v < numberOfEnemies; v++) {
