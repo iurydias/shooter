@@ -44,14 +44,20 @@ public class MouseDetector extends MouseAdapter implements MouseMotionListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e)) {
-            game.addBullet(1);
-        }
-        if (SwingUtilities.isRightMouseButton(e)) {
-            if(game.gun == 1){
-                game.gun = 2;
-            }else if(game.gun == 2){
-                game.gun = 1;
+        if (!game.play) {
+            if (SwingUtilities.isLeftMouseButton(e)) {
+                pClicked = e.getPoint();
+            }
+        } else {
+            if (SwingUtilities.isLeftMouseButton(e)) {
+                game.addBullet(1);
+            }
+            if (SwingUtilities.isRightMouseButton(e)) {
+                if (game.gun == 1) {
+                    game.gun = 2;
+                } else {
+                    game.gun = 1;
+                }
             }
         }
     }

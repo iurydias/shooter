@@ -13,15 +13,26 @@ import javax.swing.JPanel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.util.Random;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 
 /**
  *
  * @authors Iury, Vinicius and Daniel
  */
 public class CanvasPanelImage extends JPanel implements Runnable {
+
+    int turbo = 1;
+    JFrame frame = new JFrame("Space Shooter");
+    GameWindowHandler window;
+    boolean inited = false;
+    MenuPanel menuPanel;
+    boolean mainPanel;
+    boolean gameOver;
+    boolean resultPanel;
+    volatile boolean play;
+    ResultPanel result;
     int score = 0;
     Font font = new Font(Font.MONOSPACED, Font.BOLD, 50);
     Image backGround;
@@ -44,10 +55,10 @@ public class CanvasPanelImage extends JPanel implements Runnable {
     int speedOfEnemies = 3;
     int numberOfEnemyBullets = 15;
     int gun = 1;
-    int numberOfHearts = 3;
+    int numberOfHearts = 8;
     int remainingHearts = numberOfHearts;
     int numberOfSortMissiles = 10;
-     int numberOfMissiles = 3;
+    int numberOfMissiles = 3;
     Random rn = new Random();
     int j;
 
@@ -59,75 +70,101 @@ public class CanvasPanelImage extends JPanel implements Runnable {
     Bullet[] bullets1;
     Bullet[] bullets2;
     Bullet[] enemyBullets;
-
     MouseDetector mouse;
     Player player;
 
+    private long diff, start = System.currentTimeMillis();
+
     public CanvasPanelImage() {
-        setDoubleBuffered(true);
+        setSize(1080, 660);
+        frame.setSize(1080, 680);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setResizable(false);
         setFocusable(true);
-        load();
-        new Thread(this).start();
+        frame.setLocationRelativeTo(null);
+        setBackground(Color.BLACK);
+        frame.add(this);
+        backGround = new ImageIcon(this.getClass().getResource("background1.jpg")).getImage();
+
+        frame.setVisible(true);
     }
 
     @Override
     public void paintComponent(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
         super.paintComponent(g);
-        //backGround = new ImageIcon(this.getClass().getResource("background1.jpg")).getImage();
-        g2d.drawImage(backGround, 0, 0, null);
-        player.draw(g2d, theta);
-        //carregando images de inimigos
-        for (int v = 0; v < numberOfEnemies; v++) {
-            if (enemy[v].isAlive) {
-                g2d.drawImage(enemy[v].getImage(), enemy[v].x,
-                        enemy[v].y, null);
+        Graphics2D g2d = (Graphics2D) g;
+        if (inited) {
+            if (mainPanel) {
+                menuPanel.draw(g2d);
+            } else if (!gameOver) {
+                //backGround = new ImageIcon(this.getClass().getResource("background1.jpg")).getImage();
+                g2d.drawImage(backGround, 0, 0, null);
+                player.draw(g2d, theta);
+                //carregando images de inimigos
+                for (int v = 0; v < numberOfEnemies; v++) {
+                    if (enemy[v].isAlive) {
+                        g2d.drawImage(enemy[v].getImage(), enemy[v].x,
+                                enemy[v].y, null);
 
-                // enemy[v].draw(g2d);
+                        // enemy[v].draw(g2d);
+                    }
+                }
+                //carregando as imagens dos mísseis extras
+                for (int v = 0; v < numberOfSortMissiles; v++) {
+                    if (sortmissiles[v].fired) {
+                        g2d.drawImage(sortmissiles[v].getImage(), sortmissiles[v].x,
+                                sortmissiles[v].y, null);
+                    }
+                }
+                //carregando as imagens das vidas
+                for (int i = 0; i < numberOfHearts; i++) {
+                    g2d.drawImage(hearts[i].getImage(), hearts[i].x + 40, 30, null);
+                }
+                //carregando as imagens dos mísseis
+                for (int i = 0; i < numberOfMissiles; i++) {
+                    g2d.drawImage(missiles[i].getImage(), missiles[i].x + 700, 30, null);
+                }
+                g2d.setFont(font);
+                g2d.drawString(String.valueOf(score), 420, 70);
+                //carregando as imagens das balas
+                for (int i = 0; i < numberOfBullets; i++) {
+                    if (bullets1[i].fired) {
+                        g2d.drawImage(bullets1[i].getImage(), bullets1[i].x,
+                                bullets1[i].y, null);
+                    }
+                }
+                //carregando as imagens das balas
+                for (int i = 0; i < numberOfBullets; i++) {
+                    if (bullets2[i].fired) {
+                        g2d.drawImage(bullets2[i].getImage(), bullets2[i].x,
+                                bullets2[i].y, null);
+                    }
+                }
+                //carregando as imagens dos inimigos
+                for (int i = 0; i < numberOfEnemyBullets; i++) {
+                    if (enemyBullets[i].fired) {
+                        g2d.drawImage(enemyBullets[i].getImage(), enemyBullets[i].x,
+                                enemyBullets[i].y, null);
+                    }
+                }
+            } else if (resultPanel) {
+                result.draw(g2d);
             }
         }
-        //carregando sorteadamente o numero de misseis
-        for (int v = 0; v < numberOfSortMissiles; v++) {
-            if (sortmissiles[v].fired) {
-                g2d.drawImage(sortmissiles[v].getImage(), sortmissiles[v].x,
-                        sortmissiles[v].y, null);
-            }
-        }
-        for (int i = 0; i < numberOfHearts; i++) {
-            g2d.drawImage(hearts[i].getImage(), hearts[i].x + 40, 30, null);
-        }
-        for (int i = 0; i < numberOfMissiles; i++) {
-            g2d.drawImage(missiles[i].getImage(), missiles[i].x + 700, 30, null);
-        }
-        g2d.setFont(font);
-         g2d.drawString(String.valueOf(score), 420, 70);
-        
-        for (int i = 0; i < numberOfBullets; i++) {
-            if (bullets1[i].fired) {
-                g2d.drawImage(bullets1[i].getImage(), bullets1[i].x,
-                        bullets1[i].y, null);
-            }
-        }
-        for (int i = 0; i < numberOfBullets; i++) {
-            if (bullets2[i].fired) {
-                g2d.drawImage(bullets2[i].getImage(), bullets2[i].x,
-                        bullets2[i].y, null);
-            }
-        }
-        for (int i = 0; i < numberOfEnemyBullets; i++) {
-            if (enemyBullets[i].fired) {
-                g2d.drawImage(enemyBullets[i].getImage(), enemyBullets[i].x,
-                        enemyBullets[i].y, null);
-            }
-        }
-
     }
 
-    private void load() {
+    private void init() {
         addKeyListener(new KeyboardAdapter());
         //double n;
         mouse = new MouseDetector(this);
         player = new Player();
+        gameOver = true;
+        mainPanel = true;
+        resultPanel = false;
+        inited = true;
+        menuPanel = new MenuPanel(this);
+        result = new ResultPanel(this);
+        window = new GameWindowHandler(this);
         // setBackground(Color.BLACK);
         remainingHearts = numberOfHearts;
         hearts = new HealthBar[numberOfHearts];
@@ -140,7 +177,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
             missiles[i] = new Missile(1);
             missiles[i].x = 40 * i;
         }
-        
+
         thread = new Thread(this);
         enemy = new Enemy[numberOfEnemies];
         for (int i = 0; i < numberOfEnemies; i++) {
@@ -169,10 +206,10 @@ public class CanvasPanelImage extends JPanel implements Runnable {
             bullets1[i] = new Bullet(210, 200, 0);
         }
         sortmissiles = new Missile[numberOfSortMissiles];
-        for (int i = 0; i < numberOfSortMissiles ; i++) {
+        for (int i = 0; i < numberOfSortMissiles; i++) {
             sortmissiles[i] = new Missile(1);
         }
-        
+
         bullets2 = new Bullet[numberOfBullets];
         for (int i = 0; i < numberOfBullets; i++) {
             bullets2[i] = new Bullet(2);
@@ -197,187 +234,200 @@ public class CanvasPanelImage extends JPanel implements Runnable {
     }
 
     public void run() {
-
-        double btime, dtime = 0;
-        btime = System.currentTimeMillis();
+        init();
         while (true) {
-            update(dtime / 1000);
-            repaint();
-            try {
-                thread.sleep(10);
-            } catch (InterruptedException e) {
-                System.out.println(e.getMessage());
+
+            main();
+
+            while (!gameOver) {
+                play();
             }
-            dtime = (System.currentTimeMillis() - btime);
-            btime = System.currentTimeMillis();
+
+            result();
         }
     }
 
-    private void update(double dt) {
+    public void play() {
         // System.out.println(player.y);
-        for (int i = 0; i < numberOfEnemies; i++) {
-            System.out.println(enemy[i].y);
-            // enemy[i].y = enemy[i].y
-            //       - (int) (2 * Math.sin(enemy[i].theta));
-            if (enemy[i].enemytype == 1 || enemy[i].enemytype == 2) {
-                enemy[i].x = enemy[i].x - (int) (100 * dt);
-            } else if (enemy[i].enemytype == 3) {
-                if (enemy[i].movement == 1) {
-                    enemy[i].x = enemy[i].x - (int) (100 * dt);
-                    enemy[i].y = enemy[i].y + (int) (100 * dt);
-                } else if (enemy[i].movement == 2) {
-                    enemy[i].x = enemy[i].x - (int) (100 * dt);
-                    enemy[i].y = enemy[i].y - (int) (100 * dt);
-                }
-            } else if (enemy[i].enemytype == 4) {
-                if (enemy[i].movement == 1) {
-                    enemy[i].x = enemy[i].x - (int) (100 * dt);
-                    enemy[i].y = enemy[i].y + (int) (100 * dt);
-                } else if (enemy[i].movement == 2) {
-                    enemy[i].x = enemy[i].x - (int) (100 * dt);
-                    enemy[i].y = enemy[i].y - (int) (100 * dt);
-                }
-                if (enemy[i].y > enemy[i].initialpy + 50) {
-                    if (enemy[i].movement == 1) {
-                        enemy[i].movement = 2;
-                    } else {
-                        enemy[i].movement = 1;
+        while (play) {
+            if (player.isAlive) {
+                for (int i = 0; i < numberOfEnemies; i++) {
+                    // enemy[i].y = enemy[i].y
+                    //       - (int) (2 * Math.sin(enemy[i].theta));
+                    if (enemy[i].enemytype == 1 || enemy[i].enemytype == 2) {
+                        enemy[i].x = enemy[i].x - turbo;
+                    } else if (enemy[i].enemytype == 3) {
+                        if (enemy[i].movement == 1) {
+                            enemy[i].x = enemy[i].x - turbo;
+                            enemy[i].y = enemy[i].y + turbo;
+                        } else if (enemy[i].movement == 2) {
+                            enemy[i].x = enemy[i].x - turbo;
+                            enemy[i].y = enemy[i].y - turbo;
+                        }
+                    } else if (enemy[i].enemytype == 4) {
+                        if (enemy[i].movement == 1) {
+                            enemy[i].x = enemy[i].x - turbo;
+                            enemy[i].y = enemy[i].y + turbo;
+                        } else if (enemy[i].movement == 2) {
+                            enemy[i].x = enemy[i].x - turbo;
+                            enemy[i].y = enemy[i].y - turbo;
+                        }
+                        if (enemy[i].y > enemy[i].initialpy + 50) {
+                            if (enemy[i].movement == 1) {
+                                enemy[i].movement = 2;
+                            } else {
+                                enemy[i].movement = 1;
+                            }
+                        }
+                        if (enemy[i].y < enemy[i].initialpy - 50) {
+                            if (enemy[i].movement == 1) {
+                                enemy[i].movement = 2;
+                            } else {
+                                enemy[i].movement = 1;
+                            }
+                        }
+                    }
+                    if (enemy[i].x < -100 || enemy[i].y < -100 || enemy[i].y > 700) {
+                        enemy[i].setLocation();
+                    }
+                    if (enemy[i].isAlive
+                            && remainingHearts != 0
+                            && enemy[i].getBounds().intersects(
+                                    player.getBounds())) {
+                        enemy[i].isAlive = false;
+                        countEnemy--;
+                        hearts[--remainingHearts].setImage();
                     }
                 }
-                if (enemy[i].y < enemy[i].initialpy - 50) {
-                    if (enemy[i].movement == 1) {
-                        enemy[i].movement = 2;
+            }
+            for (int i = 0; i < numberOfBullets; i++) {
+                if (bullets1[i].fired) {
+                    for (int v = 0; v < numberOfEnemies; v++) {
+                        if (enemy[v].isAlive) {
+                            if (enemy[v].getBounds().intersects(
+                                    bullets1[i].getBounds())) {
+                                enemy[v].enemylife--;
+                                if (enemy[v].enemylife == 0) {
+                                    if (enemy[v].enemytype == 1) {
+                                        score += 10;
+                                    } else if (enemy[v].enemytype == 2) {
+                                        score += 50;
+                                    } else if (enemy[v].enemytype == 3) {
+                                        score += 100;
+                                    } else if (enemy[v].enemytype == 4) {
+                                        score += 200;
+                                    }
+                                    enemy[v].isAlive = false;
+                                    countEnemy--;
+                                    j = rn.nextInt(diffMissile + 1);
+                                    j += minMissile;
+                                    if (j == 2) {
+                                        addMissile(enemy[v]);
+                                    }
+                                }
+                                bullets1[i].fired = false;
+                            }
+                        }
+                    }
+                    if (bullets1[i].x < -100 || bullets1[i].x > 1180
+                            || bullets1[i].y < -100 || bullets1[i].y > 760) {
+                        bullets1[i].fired = false;
                     } else {
-                        enemy[i].movement = 1;
+                        // bullets[i].y = bullets[i].y
+                        //   + (int) (speedOfBullets * bullets[i].sin);
+
+                        bullets1[i].x = bullets1[i].x + turbo * 10;
                     }
                 }
             }
-            if (enemy[i].x < -100 || enemy[i].y < -100 || enemy[i].y > 700) {
-                enemy[i].setLocation();
+            for (int i = 0; i < numberOfEnemyBullets; i++) {
+                if (enemyBullets[i].fired) {
+                    if (player.getBounds().intersects(
+                            enemyBullets[i].getBounds())) {
+                        hearts[--remainingHearts].setImage();
+                        enemyBullets[i].fired = false;
+                    }
+                    if (enemyBullets[i].x < -200 || enemyBullets[i].x > 1300
+                            || enemyBullets[i].y < -200 || enemyBullets[i].y > 1000) {
+                        enemyBullets[i].fired = false;
+                    } else {
+                        enemyBullets[i].x = enemyBullets[i].x - turbo * 10;
+                    }
+                }
             }
-            if (enemy[i].isAlive
-                    && remainingHearts != 0
-                    && enemy[i].getBounds().intersects(
-                            player.getBounds())) {
-                enemy[i].isAlive = false;
-                countEnemy--;
-                hearts[--remainingHearts].setImage();
-            }
-        }
-        //cvxcv
-        for (int i = 0; i < numberOfBullets; i++) {
-            if (bullets1[i].fired) {
-                for (int v = 0; v < numberOfEnemies; v++) {
-                    if (enemy[v].isAlive) {
-                        if (enemy[v].getBounds().intersects(
-                                bullets1[i].getBounds())) {
-                            enemy[v].enemylife--;
-                            if (enemy[v].enemylife == 0) {
-                                if (enemy[v].enemytype == 1){
+
+            for (int i = 0; i < numberOfBullets; i++) {
+                if (bullets2[i].fired) {
+                    for (int v = 0; v < numberOfEnemies; v++) {
+                        if (enemy[v].isAlive) {
+                            if (enemy[v].getBounds().intersects(
+                                    bullets2[i].getBounds())) {
+                                if (enemy[v].enemytype == 1) {
                                     score += 10;
-                                }else if (enemy[v].enemytype == 2){
+                                } else if (enemy[v].enemytype == 2) {
                                     score += 50;
-                                }else if (enemy[v].enemytype == 3){
+                                } else if (enemy[v].enemytype == 3) {
                                     score += 100;
-                                }else if (enemy[v].enemytype == 4){
+                                } else if (enemy[v].enemytype == 4) {
                                     score += 200;
                                 }
                                 enemy[v].isAlive = false;
                                 countEnemy--;
-                                j = rn.nextInt(diffMissile + 1);
-                                j += minMissile;
-                                if (j == 2) {
+                                bullets2[i].fired = false;
+                                j = rn.nextInt(diffEnemy + 1);
+                                j += minEnemy;
+                                if (j == 4) {
                                     addMissile(enemy[v]);
                                 }
                             }
-                            bullets1[i].fired = false;
                         }
                     }
-                }
-                if (bullets1[i].x < -100 || bullets1[i].x > 1180
-                        || bullets1[i].y < -100 || bullets1[i].y > 760) {
-                    bullets1[i].fired = false;
-                } else {
-                    // bullets[i].y = bullets[i].y
-                    //   + (int) (speedOfBullets * bullets[i].sin);
+                    if (bullets2[i].x < -100 || bullets2[i].x > 1180
+                            || bullets2[i].y < -100 || bullets2[i].y > 760) {
+                        bullets2[i].fired = false;
+                    } else {
+                        // bullets[i].y = bullets[i].y
+                        //   + (int) (speedOfBullets * bullets[i].sin);
 
-                    bullets1[i].x = bullets1[i].x + (int) (1000 * dt);
-                }
-            }
-        }
-        for (int i = 0; i < numberOfEnemyBullets; i++) {
-            if (enemyBullets[i].fired) {
-                if (player.getBounds().intersects(
-                        enemyBullets[i].getBounds())) {
-                    hearts[--remainingHearts].setImage();
-                    enemyBullets[i].fired = false;
-                }
-                if (enemyBullets[i].x < -200 || enemyBullets[i].x > 1300
-                        || enemyBullets[i].y < -200 || enemyBullets[i].y > 1000) {
-                    enemyBullets[i].fired = false;
-                } else {
-                    enemyBullets[i].x = enemyBullets[i].x - (int) (1000 * dt);
-                }
-            }
-        }
-
-        for (int i = 0; i < numberOfBullets; i++) {
-            if (bullets2[i].fired) {
-                for (int v = 0; v < numberOfEnemies; v++) {
-                    if (enemy[v].isAlive) {
-                        if (enemy[v].getBounds().intersects(
-                                bullets2[i].getBounds())) {
-                             if (enemy[v].enemytype == 1){
-                                    score += 10;
-                                }else if (enemy[v].enemytype == 2){
-                                    score += 50;
-                                }else if (enemy[v].enemytype == 3){
-                                    score += 100;
-                                }else if (enemy[v].enemytype == 4){
-                                    score += 200;
-                                }
-                            enemy[v].isAlive = false;
-                            countEnemy--;
-                            bullets2[i].fired = false;
-                            j = rn.nextInt(diffEnemy + 1);
-                            j += minEnemy;
-                            if (j == 4) {
-                                addMissile(enemy[v]);
-                            }
-                        }
+                        bullets2[i].x = bullets2[i].x + turbo * 10;
                     }
                 }
-                if (bullets2[i].x < -100 || bullets2[i].x > 1180
-                        || bullets2[i].y < -100 || bullets2[i].y > 760) {
-                    bullets2[i].fired = false;
-                } else {
-                    // bullets[i].y = bullets[i].y
-                    //   + (int) (speedOfBullets * bullets[i].sin);
+            }
 
-                    bullets2[i].x = bullets2[i].x + (int) (1000 * dt);
+            if (timeForBullet % seconds == 0) {
+                int rand = (int) (Math.random() * numberOfEnemies);
+                if (enemy[rand].isAlive) {
+                    addEnemyBullet(enemy[rand]);
                 }
             }
-        }
-
-        if (timeForBullet % seconds == 0) {
-            int rand = (int) (Math.random() * numberOfEnemies);
-            if (enemy[rand].isAlive) {
-                addEnemyBullet(enemy[rand]);
+            if (remainingHearts == 0) {
+                result.won = false;
+                play = false;
+                gameOver = true;
+                resultPanel = true;
             }
+            if (countEnemy == 0) {
+                result.won = true;
+                play = false;
+                gameOver = true;
+                resultPanel = true;
+            }
+            if (key_states[KeyEvent.VK_UP]) {
+                player.y = player.y - turbo * 5;
+            }
+            if (key_states[KeyEvent.VK_DOWN]) {
+                player.y = player.y + turbo * 5;
+            }
+            if (key_states[KeyEvent.VK_LEFT]) {
+                player.x = player.x - turbo * 5;
+            }
+            if (key_states[KeyEvent.VK_RIGHT]) {
+                player.x = player.x + turbo * 5;
+            }
+            repaint();
+            sleep(60);
+            timeForBullet++;
         }
-        if (key_states[KeyEvent.VK_UP]) {
-            player.y = player.y - (500 * dt);
-        }
-        if (key_states[KeyEvent.VK_DOWN]) {
-            player.y = player.y + (500 * dt);
-        }
-        if (key_states[KeyEvent.VK_LEFT]) {
-            player.x = player.x - (500 * dt);
-        }
-        if (key_states[KeyEvent.VK_RIGHT]) {
-            player.x = player.x + (500 * dt);
-        }
-        timeForBullet++;
     }
 
     public void addBullet(int x) {
@@ -386,7 +436,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 for (int i = 0; i < numberOfBullets; i++) {
                     if (!bullets1[i].fired) {
                         bullets1[i].x = (int) player.x + 50;
-                        bullets1[i].y = (int) player.y + 60;
+                        bullets1[i].y = (int) player.y + 10;
                         bullets1[i].fired = true;
                         break;
                     }
@@ -395,7 +445,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 for (int i = 0; i < numberOfBullets; i++) {
                     if (!bullets2[i].fired) {
                         bullets2[i].x = (int) player.x + 50;
-                        bullets2[i].y = (int) player.y + 60;
+                        bullets2[i].y = (int) player.y + 10;
                         bullets2[i].fired = true;
                         break;
                     }
@@ -423,6 +473,156 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 sortmissiles[i].fired = true;
                 break;
             }
+        }
+    }
+
+    public void result() {
+        result.painted = false;
+        mouse.pClicked.x = 0;
+        mouse.pClicked.y = 0;
+        while (resultPanel) {
+
+            for (int i = 0; i < 2; i++) {
+                if (result.rectangle[i].contains(mouse.pMoved)) {
+                    result.activated[i] = true;
+                } else {
+                    result.activated[i] = false;
+                }
+            }
+
+            if (result.rectangle[1].contains(mouse.pClicked)) {
+                System.exit(0);
+            }
+            if (result.rectangle[0].contains(mouse.pClicked)) {
+                mouse.pClicked.x = 0;
+                mouse.pClicked.y = 0;
+                resultPanel = false;
+                mainPanel = true;
+            }
+            sleep(60);
+            repaint();
+            result.painted = true;
+
+        }
+    }
+
+    public void main() {
+
+        while (mainPanel) {
+
+            for (int i = 0; i < 7; i++) {
+                if (menuPanel.rectangle[i].contains(mouse.pMoved)) {
+                    menuPanel.activated[i] = true;
+                } else {
+                    menuPanel.activated[i] = false;
+                }
+            }
+
+            if (menuPanel.rectangle[0].contains(mouse.pClicked)) {
+                menuPanel.clicked = true;
+            } else {
+                if (!(menuPanel.rectangle[4].contains(mouse.pClicked)
+                        || menuPanel.rectangle[5].contains(mouse.pClicked) || menuPanel.rectangle[6]
+                        .contains(mouse.pClicked))) {
+                    menuPanel.clicked = false;
+                }
+
+            }
+
+            if (menuPanel.rectangle[3].contains(mouse.pClicked)) {
+                System.exit(0);
+            }
+            if (menuPanel.rectangle[2].contains(mouse.pClicked)) {
+                mouse.pClicked.x = 0;
+                mouse.pClicked.y = 0;
+                new AboutWindow();
+            }
+            if (menuPanel.rectangle[1].contains(mouse.pClicked)) {
+                mouse.pClicked.x = 0;
+                mouse.pClicked.y = 0;
+                new HelpWindow();
+            }
+
+            if (menuPanel.clicked
+                    && menuPanel.rectangle[4].contains(mouse.pClicked)) {
+                menuPanel.clicked = false;
+                numberOfEnemies = 8;
+                numberOfHearts = 3;
+                remainingHearts = 3;
+                seconds = 90;
+                countEnemy = numberOfEnemies;
+                reset();
+                mainPanel = false;
+                play = true;
+                gameOver = false;
+            }
+            if (menuPanel.clicked
+                    && menuPanel.rectangle[5].contains(mouse.pClicked)) {
+                menuPanel.clicked = false;
+                numberOfEnemies = 13;
+                numberOfHearts = 3;
+                remainingHearts = 3;
+                seconds = 70;
+                countEnemy = numberOfEnemies;
+                reset();
+                mainPanel = false;
+                play = true;
+                gameOver = false;
+            }
+            if (menuPanel.clicked
+                    && menuPanel.rectangle[6].contains(mouse.pClicked)) {
+                menuPanel.clicked = false;
+                numberOfEnemies = 20;
+                numberOfHearts = 3;
+                remainingHearts = 3;
+                seconds = 60;
+                countEnemy = numberOfEnemies;
+                reset();
+                mainPanel = false;
+                play = true;
+                gameOver = false;
+            }
+            repaint();
+            sleep(60);
+
+        }
+    }
+
+    public void reset() {
+
+        for (int i = 0; i < numberOfHearts; i++) {
+            hearts[i].setHealth();
+        }
+
+        for (int i = 0; i < numberOfEnemies; i++) {
+            enemy[i].isAlive = true;
+            enemy[i].setLocation();
+        }
+
+        for (int i = 0; i < numberOfBullets; i++) {
+            bullets1[i].fired = false;
+            bullets2[i].fired = false;
+        }
+        player.x = 1080 / 2 - 50;
+        player.y = 340 - 40;
+
+    }
+
+    public static void main(String[] args) {
+        new Thread(new CanvasPanelImage()).start();
+    }
+
+    public void sleep(int fps) {
+        if (fps > 0) {
+            diff = System.currentTimeMillis() - start;
+            long targetDelay = 1000 / fps;
+            if (diff < targetDelay) {
+                try {
+                    Thread.sleep(targetDelay - diff);
+                } catch (InterruptedException e) {
+                }
+            }
+            start = System.currentTimeMillis();
         }
     }
 }

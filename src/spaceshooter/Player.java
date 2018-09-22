@@ -20,7 +20,7 @@ public class Player {
 
     public Player() {
         if (image == null) {
-            image = new ImageIcon(this.getClass().getResource("spaceship.png")).getImage();
+            image = new ImageIcon(this.getClass().getResource("spaceship1.png")).getImage();
         }
     }
 
@@ -29,7 +29,7 @@ public class Player {
     }
 
     public Rectangle getBounds() {
-        return new Rectangle((int) x + 20, (int) y + 20, image.getWidth(null) - 65, image.getHeight(null) + 65 );
+        return new Rectangle((int) x + 20, (int) y + 20, image.getWidth(null), image.getHeight(null));
     }
 
     public void setX(int x) {

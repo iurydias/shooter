@@ -58,7 +58,7 @@ public class Enemy {
     }
 
     public Rectangle getBounds() {
-        return new Rectangle(x, y, image.getWidth(null) - 5, image.getHeight(null) - 5);
+        return new Rectangle(x, y, image.getWidth(null), image.getHeight(null));
     }
 
     public void setLocation() {

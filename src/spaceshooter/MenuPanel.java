@@ -2,18 +2,22 @@ package spaceshooter;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 public class MenuPanel {
 
-	String projectName = "ICS-201-PROJECT";
-	String myName = "Mohammad Aljarbou";
+	String projectName = "SPACE SHOOTER";
+	String myName = "By: Daniel, Iury and Vinícius";
 	String about = "About";
 	String help = "Help";
 	String exit = "Exit";
@@ -23,8 +27,7 @@ public class MenuPanel {
 	String advance = "Advance";
 	boolean[] activated = new boolean[7];
 	Point[] point = new Point[7];
-	BufferedImage image;
-	File imageF = new File("button.jpg");
+	Image image;
 	int button_w = 150;
 	int button_h = 50;
 	CanvasPanelImage game;
@@ -48,10 +51,8 @@ public class MenuPanel {
 
 		}
 
-		try {
-			image = ImageIO.read(imageF);
-		} catch (Exception e) {
-		}
+			image = new ImageIcon(this.getClass().getResource("button.jpg")).getImage();
+		
 
 		this.game = game;
 
@@ -62,11 +63,12 @@ public class MenuPanel {
 		g2d.drawImage(game.opacity, 0, 0, null);
 		g2d.setColor(Color.BLUE);
 		g2d.setFont(game.font);
-		g2d.drawString("ICS-201-PROJECT", 360, 100);
+		g2d.drawString("SPACE SHOOTER", 360, 100);
 		g2d.setColor(Color.WHITE);
-		g2d.setFont(game.font);
-		g2d.drawString("Mohammad Aljarbou", 345, 135);
-
+                Font font = new Font(Font.MONOSPACED, Font.BOLD, 32);
+		g2d.setFont(font);
+		g2d.drawString("By: Daniel, Iury and Vinícius", 280, 135);
+                g2d.setFont(game.font);
 		for (int i = 0; i < 4; i++) {
 			if (activated[i]) {
 				g2d.drawImage(image, point[i].x, point[i].y, null);
