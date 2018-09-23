@@ -51,12 +51,16 @@ public class MouseDetector extends MouseAdapter implements MouseMotionListener {
         } else {
             if (SwingUtilities.isLeftMouseButton(e)) {
                 game.addBullet(1);
+                if (game.gun == 2 && game.remainingMissiles > 0){
+                game.missiles[--game.remainingMissiles].setImage();
+            }
             }
             if (SwingUtilities.isRightMouseButton(e)) {
                 if (game.gun == 1) {
                     game.gun = 2;
                 } else {
                     game.gun = 1;
+                    
                 }
             }
         }

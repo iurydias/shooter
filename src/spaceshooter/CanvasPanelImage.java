@@ -40,7 +40,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
     int maxEnemy = 4;
     int minEnemy = 1;
     int diffEnemy = maxEnemy - minEnemy;
-    int maxMissile = 10;
+    int maxMissile = 2;
     int minMissile = 1;
     int diffMissile = maxMissile - minMissile;
     private boolean[] key_states = new boolean[256];
@@ -59,8 +59,10 @@ public class CanvasPanelImage extends JPanel implements Runnable {
     int remainingHearts = numberOfHearts;
     int numberOfSortMissiles = 10;
     int numberOfMissiles = 3;
+    int remainingMissiles = numberOfMissiles;
+    int numberOfMissilesToShot = 3;
+    int control = 0;
     Random rn = new Random();
-    int j;
 
     Missile[] missiles;
     Missile[] sortmissiles;
@@ -68,7 +70,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
     Enemy[] enemy;
     HealthBar[] hearts;
     Bullet[] bullets1;
-    Bullet[] bullets2;
+    Bullet[] shotmissiles;
     Bullet[] enemyBullets;
     MouseDetector mouse;
     Player player;
@@ -76,8 +78,8 @@ public class CanvasPanelImage extends JPanel implements Runnable {
     private long diff, start = System.currentTimeMillis();
 
     public CanvasPanelImage() {
-        setSize(1080, 660);
-        frame.setSize(1080, 680);
+        setSize(900, 700);
+        frame.setSize(900, 700);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.setResizable(false);
         setFocusable(true);
@@ -134,10 +136,10 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                     }
                 }
                 //carregando as imagens das balas
-                for (int i = 0; i < numberOfBullets; i++) {
-                    if (bullets2[i].fired) {
-                        g2d.drawImage(bullets2[i].getImage(), bullets2[i].x,
-                                bullets2[i].y, null);
+                for (int i = 0; i < numberOfMissilesToShot; i++) {
+                    if (shotmissiles[i].fired) {
+                        g2d.drawImage(shotmissiles[i].getImage(), shotmissiles[i].x,
+                                shotmissiles[i].y, null);
                     }
                 }
                 //carregando as imagens dos inimigos
@@ -166,7 +168,6 @@ public class CanvasPanelImage extends JPanel implements Runnable {
         result = new ResultPanel(this);
         window = new GameWindowHandler(this);
         // setBackground(Color.BLACK);
-        remainingHearts = numberOfHearts;
         hearts = new HealthBar[numberOfHearts];
         for (int i = 0; i < numberOfHearts; i++) {
             hearts[i] = new HealthBar();
@@ -210,9 +211,9 @@ public class CanvasPanelImage extends JPanel implements Runnable {
             sortmissiles[i] = new Missile(1);
         }
 
-        bullets2 = new Bullet[numberOfBullets];
+        shotmissiles = new Bullet[numberOfBullets];
         for (int i = 0; i < numberOfBullets; i++) {
-            bullets2[i] = new Bullet(2);
+            shotmissiles[i] = new Bullet(2);
         }
         enemyBullets = new Bullet[numberOfEnemyBullets];
         for (int i = 0; i < numberOfEnemyBullets; i++) {
@@ -319,9 +320,10 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                                     }
                                     enemy[v].isAlive = false;
                                     countEnemy--;
+                                    int j;
                                     j = rn.nextInt(diffMissile + 1);
                                     j += minMissile;
-                                    if (j == 2) {
+                                    if (j == 1) {
                                         addMissile(enemy[v]);
                                     }
                                 }
@@ -355,13 +357,31 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                     }
                 }
             }
+            for (int i = 0; i < numberOfSortMissiles; i++) {
+                if (player.getBounds().intersects(
+                        sortmissiles[i].getBounds())) {
+                    sortmissiles[i].fired = false;
+                    sortmissiles[i].x = 900;
+                    sortmissiles[i].y = 900;
+                    for (int l = 0; l < numberOfMissilesToShot; l++) {
+                        if (shotmissiles[l].fired == true) {
+                            shotmissiles[l].fired = false;
+                            missiles[l].setHealth();
+                            ++remainingMissiles;
+                            break;
+                        }
 
-            for (int i = 0; i < numberOfBullets; i++) {
-                if (bullets2[i].fired) {
+                    }
+
+                }
+            }
+
+            for (int i = 0; i < numberOfMissilesToShot; i++) {
+                if (shotmissiles[i].fired) {
                     for (int v = 0; v < numberOfEnemies; v++) {
                         if (enemy[v].isAlive) {
                             if (enemy[v].getBounds().intersects(
-                                    bullets2[i].getBounds())) {
+                                    shotmissiles[i].getBounds())) {
                                 if (enemy[v].enemytype == 1) {
                                     score += 10;
                                 } else if (enemy[v].enemytype == 2) {
@@ -373,24 +393,19 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                                 }
                                 enemy[v].isAlive = false;
                                 countEnemy--;
-                                bullets2[i].fired = false;
-                                j = rn.nextInt(diffEnemy + 1);
-                                j += minEnemy;
-                                if (j == 4) {
+                                int j;
+                                j = rn.nextInt(diffMissile + 1);
+                                j += minMissile;
+                                if (j == 2) {
                                     addMissile(enemy[v]);
                                 }
+                                shotmissiles[i].x = 900;
+                                shotmissiles[i].y = 900;
+
                             }
                         }
                     }
-                    if (bullets2[i].x < -100 || bullets2[i].x > 1180
-                            || bullets2[i].y < -100 || bullets2[i].y > 760) {
-                        bullets2[i].fired = false;
-                    } else {
-                        // bullets[i].y = bullets[i].y
-                        //   + (int) (speedOfBullets * bullets[i].sin);
-
-                        bullets2[i].x = bullets2[i].x + turbo * 10;
-                    }
+                    shotmissiles[i].x = shotmissiles[i].x + turbo * 10;
                 }
             }
 
@@ -443,10 +458,10 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 }
             } else {
                 for (int i = 0; i < numberOfBullets; i++) {
-                    if (!bullets2[i].fired) {
-                        bullets2[i].x = (int) player.x + 50;
-                        bullets2[i].y = (int) player.y + 10;
-                        bullets2[i].fired = true;
+                    if (!shotmissiles[i].fired) {
+                        shotmissiles[i].x = (int) player.x + 50;
+                        shotmissiles[i].y = (int) player.y + 10;
+                        shotmissiles[i].fired = true;
                         break;
                     }
                 }
@@ -466,7 +481,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
     }
 
     public void addMissile(Enemy sEnemy) {
-        for (int i = 0; i < numberOfMissiles; i++) {
+        for (int i = 0; i < numberOfSortMissiles; i++) {
             if (!sortmissiles[i].fired) {
                 sortmissiles[i].x = sEnemy.x + 25;
                 sortmissiles[i].y = sEnemy.y + 25;
@@ -549,7 +564,10 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 numberOfEnemies = 8;
                 numberOfHearts = 3;
                 remainingHearts = 3;
+                remainingMissiles = numberOfMissiles;
+                numberOfMissilesToShot = 3;
                 seconds = 90;
+                score = 0;
                 countEnemy = numberOfEnemies;
                 reset();
                 mainPanel = false;
@@ -562,7 +580,10 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 numberOfEnemies = 13;
                 numberOfHearts = 3;
                 remainingHearts = 3;
+                remainingMissiles = numberOfMissiles;
+                numberOfMissilesToShot = 3;
                 seconds = 70;
+                score = 0;
                 countEnemy = numberOfEnemies;
                 reset();
                 mainPanel = false;
@@ -575,7 +596,10 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 numberOfEnemies = 20;
                 numberOfHearts = 3;
                 remainingHearts = 3;
+                remainingMissiles = numberOfMissiles;
+                numberOfMissilesToShot = 3;
                 seconds = 60;
+                score = 0;
                 countEnemy = numberOfEnemies;
                 reset();
                 mainPanel = false;
@@ -593,15 +617,33 @@ public class CanvasPanelImage extends JPanel implements Runnable {
         for (int i = 0; i < numberOfHearts; i++) {
             hearts[i].setHealth();
         }
+        for (int i = 0; i < numberOfSortMissiles; i++) {
+            sortmissiles[i].fired = false;
+        }
 
         for (int i = 0; i < numberOfEnemies; i++) {
             enemy[i].isAlive = true;
             enemy[i].setLocation();
+            if (enemy[i].enemytype == 1 || enemy[i].enemytype == 2) {
+                enemy[i].enemylife = 1;
+            } else if (enemy[i].enemytype == 3) {
+                enemy[i].enemylife = 3;
+            } else {
+                enemy[i].enemylife = 5;
+            }
         }
 
         for (int i = 0; i < numberOfBullets; i++) {
             bullets1[i].fired = false;
-            bullets2[i].fired = false;
+        }
+        for (int i = 0; i < numberOfMissilesToShot; i++) {
+            shotmissiles[i].fired = false;
+        }
+        for (int i = 0; i < numberOfMissiles; i++) {
+            missiles[i].setHealth();
+        }
+        for (int i = 0; i < numberOfSortMissiles; i++) {
+            sortmissiles[i].fired = false;
         }
         player.x = 1080 / 2 - 50;
         player.y = 340 - 40;
