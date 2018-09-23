@@ -22,7 +22,9 @@ import javax.swing.JFrame;
  * @authors Iury, Vinicius and Daniel
  */
 public class CanvasPanelImage extends JPanel implements Runnable {
-
+    int turbotime;
+    int thunderx = 900,
+            thundery = 900;
     int turbo = 1;
     JFrame frame = new JFrame("Space Shooter");
     GameWindowHandler window;
@@ -87,7 +89,6 @@ public class CanvasPanelImage extends JPanel implements Runnable {
         setBackground(Color.BLACK);
         frame.add(this);
         backGround = new ImageIcon(this.getClass().getResource("background1.jpg")).getImage();
-
         frame.setVisible(true);
     }
 
@@ -109,8 +110,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                                 enemy[v].y, null);
 
                         // enemy[v].draw(g2d);
-                    }
-                }
+                    }}
                 //carregando as imagens dos mísseis extras
                 for (int v = 0; v < numberOfSortMissiles; v++) {
                     if (sortmissiles[v].fired) {
@@ -128,6 +128,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 }
                 g2d.setFont(font);
                 g2d.drawString(String.valueOf(score), 420, 70);
+                g2d.drawImage(player.getThunder(), thunderx, thundery, 90, 80, null);
                 //carregando as imagens das balas
                 for (int i = 0; i < numberOfBullets; i++) {
                     if (bullets1[i].fired) {
@@ -158,6 +159,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
     private void init() {
         addKeyListener(new KeyboardAdapter());
         //double n;
+        
         mouse = new MouseDetector(this);
         player = new Player();
         gameOver = true;
@@ -242,9 +244,11 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 
             while (!gameOver) {
                 play();
+               
             }
 
             result();
+            
         }
     }
 
@@ -256,22 +260,22 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                     // enemy[i].y = enemy[i].y
                     //       - (int) (2 * Math.sin(enemy[i].theta));
                     if (enemy[i].enemytype == 1 || enemy[i].enemytype == 2) {
-                        enemy[i].x = enemy[i].x - turbo;
+                        enemy[i].x = enemy[i].x - 1;
                     } else if (enemy[i].enemytype == 3) {
                         if (enemy[i].movement == 1) {
-                            enemy[i].x = enemy[i].x - turbo;
-                            enemy[i].y = enemy[i].y + turbo;
+                            enemy[i].x = enemy[i].x - 1;
+                            enemy[i].y = enemy[i].y + 1;
                         } else if (enemy[i].movement == 2) {
-                            enemy[i].x = enemy[i].x - turbo;
-                            enemy[i].y = enemy[i].y - turbo;
+                            enemy[i].x = enemy[i].x - 1;
+                            enemy[i].y = enemy[i].y - 1;
                         }
                     } else if (enemy[i].enemytype == 4) {
                         if (enemy[i].movement == 1) {
-                            enemy[i].x = enemy[i].x - turbo;
-                            enemy[i].y = enemy[i].y + turbo;
+                            enemy[i].x = enemy[i].x - 1;
+                            enemy[i].y = enemy[i].y + 1;
                         } else if (enemy[i].movement == 2) {
-                            enemy[i].x = enemy[i].x - turbo;
-                            enemy[i].y = enemy[i].y - turbo;
+                            enemy[i].x = enemy[i].x - 1;
+                            enemy[i].y = enemy[i].y - 1;
                         }
                         if (enemy[i].y > enemy[i].initialpy + 50) {
                             if (enemy[i].movement == 1) {
@@ -339,10 +343,12 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                         // bullets[i].y = bullets[i].y
                         //   + (int) (speedOfBullets * bullets[i].sin);
 
-                        bullets1[i].x = bullets1[i].x + turbo * 10;
+                        bullets1[i].x = bullets1[i].x + 1 * 10;
                     }
                 }
             }
+            
+         
             for (int i = 0; i < numberOfEnemyBullets; i++) {
                 if (enemyBullets[i].fired) {
                     if (player.getBounds().intersects(
@@ -354,7 +360,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                             || enemyBullets[i].y < -200 || enemyBullets[i].y > 1000) {
                         enemyBullets[i].fired = false;
                     } else {
-                        enemyBullets[i].x = enemyBullets[i].x - turbo * 10;
+                        enemyBullets[i].x = enemyBullets[i].x - 1 * 10;
                     }
                 }
             }
@@ -371,7 +377,6 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                             ++remainingMissiles;
                             break;
                         }
-
                     }
 
                 }
@@ -407,7 +412,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                             }
                         }
                     }
-                    shotmissiles[i].x = shotmissiles[i].x + turbo * 10;
+                    shotmissiles[i].x = shotmissiles[i].x + 1 * 10;
                 }
             }
 
@@ -416,6 +421,12 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 if (enemy[rand].isAlive) {
                     addEnemyBullet(enemy[rand]);
                 }
+                turbotime++;
+            }
+            if (turbotime == 6){
+                thunderx = 150;
+                thundery = 3;
+                turbo = 5;
             }
             if (remainingHearts == 0) {
                 result.won = false;
@@ -429,16 +440,16 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 gameOver = true;
                 resultPanel = true;
             }
-            if (key_states[KeyEvent.VK_UP]) {
+            if (key_states[KeyEvent.VK_UP] && player.y > 0) {
                 player.y = player.y - turbo * 5;
             }
-            if (key_states[KeyEvent.VK_DOWN]) {
+            if (key_states[KeyEvent.VK_DOWN] && player.y < 635) {
                 player.y = player.y + turbo * 5;
             }
-            if (key_states[KeyEvent.VK_LEFT]) {
+            if (key_states[KeyEvent.VK_LEFT] && player.x > 0 ){
                 player.x = player.x - turbo * 5;
             }
-            if (key_states[KeyEvent.VK_RIGHT]) {
+            if (key_states[KeyEvent.VK_RIGHT] && player.x < 835) {
                 player.x = player.x + turbo * 5;
             }
             repaint();
@@ -669,4 +680,5 @@ public class CanvasPanelImage extends JPanel implements Runnable {
             start = System.currentTimeMillis();
         }
     }
+    
 }
