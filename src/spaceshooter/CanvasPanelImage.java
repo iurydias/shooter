@@ -323,6 +323,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                                     int j;
                                     j = rn.nextInt(diffMissile + 1);
                                     j += minMissile;
+                                    System.out.println(j);
                                     if (j == 1) {
                                         addMissile(enemy[v]);
                                     }
@@ -366,7 +367,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                     for (int l = 0; l < numberOfMissilesToShot; l++) {
                         if (shotmissiles[l].fired == true) {
                             shotmissiles[l].fired = false;
-                            missiles[l].setHealth();
+                            missiles[remainingMissiles].setHealth();
                             ++remainingMissiles;
                             break;
                         }
@@ -396,7 +397,8 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                                 int j;
                                 j = rn.nextInt(diffMissile + 1);
                                 j += minMissile;
-                                if (j == 2) {
+                                System.out.println(j);
+                                if (j == 1) {
                                     addMissile(enemy[v]);
                                 }
                                 shotmissiles[i].x = 900;
