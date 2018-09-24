@@ -106,13 +106,13 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 for(int i = 0; i< numberOfStars; i++) {
                 	if(i<=150) {
                 		g2d.setColor(Color.WHITE);
-                		g2d.fillOval(stars[i].x, stars[i].y, stars[i].width, stars[i].height);
+                		g2d.fillOval(stars[i].x, stars[i].y, stars[i].tam, stars[i].tam);
                 	}else if(i<=180) {
                 		g2d.setColor(Color.YELLOW);
-                		g2d.fillOval(stars[i].x, stars[i].y, stars[i].width, stars[i].height);
+                		g2d.fillOval(stars[i].x, stars[i].y, stars[i].tam, stars[i].tam);
                 	}else {
                 		g2d.setColor(Color.BLUE);
-                    	g2d.fillOval(stars[i].x, stars[i].y, stars[i].width, stars[i].height);
+                    	g2d.fillOval(stars[i].x, stars[i].y, stars[i].tam, stars[i].tam);
                 	}
                 	
                 }
@@ -270,18 +270,44 @@ public class CanvasPanelImage extends JPanel implements Runnable {
         // System.out.println(player.y);
         while (play) {
         	for(int i = 0; i< numberOfStars; i++) {
-        		if (player.getBounds().intersects(stars[i].getBounds())) {
-        			stars[i].setTam(1);
-        			stars[i].x -= 5; 
-        		}else {
-        			stars[i].setTam(0);
-            		stars[i].x -= 4;
+        		switch(stars[i].tam){
+        		    case 1:
+        		    	stars[i].x -= 1;
+        		    	break;
+        		    case 2:
+        		    	stars[i].x -= 2;
+        		    	break;
+        		    case 3:
+        		    	stars[i].x -= 3;
+        		    	break;
+        		    case 4:
+        		    	stars[i].x -= 4;
+        		    	break;
+        		    default:
+        		    	stars[i].x -= 5;
+        		    	break;
         		}
         		if (stars[i].x <= 0) {
         			stars[i].setLocation();
         		}
                  if (key_states[KeyEvent.VK_RIGHT] && player.x < 835) {
-                    stars[i].x -= 6;
+             		switch(stars[i].tam){
+        		    case 1:
+        		    	stars[i].x -= 2;
+        		    	break;
+        		    case 2:
+        		    	stars[i].x -= 3;
+        		    	break;
+        		    case 3:
+        		    	stars[i].x -= 4;
+        		    	break;
+        		    case 4:
+        		    	stars[i].x -= 5;
+        		    	break;
+        		    default:
+        		    	stars[i].x -= 6;
+        		    	break;
+        		}
                 }
         	}
         	
