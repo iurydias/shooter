@@ -262,8 +262,21 @@ public class CanvasPanelImage extends JPanel implements Runnable {
         // System.out.println(player.y);
         while (play) {
         	for(int i = 0; i< numberOfStars; i++) {
-        		stars[i].x -= 0.25;
+        		if (player.getBounds().intersects(stars[i].getBounds())) {
+        			stars[i].setTam(1);
+        			stars[i].x -= 2; 
+        		}else {
+        			stars[i].setTam(0);
+            		stars[i].x -= 0.02;
+        		}
+        		if (stars[i].x == 0) {
+        			stars[i].setLocation();
+        		}
+                 if (key_states[KeyEvent.VK_RIGHT] && player.x < 835) {
+                    stars[i].x -= 2;
+                }
         	}
+        	
             if (player.isAlive) {
                 for (int i = 0; i < numberOfEnemies; i++) {
                     // enemy[i].y = enemy[i].y
@@ -460,6 +473,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
             }
             if (key_states[KeyEvent.VK_RIGHT] && player.x < 835) {
                 player.x = player.x + turbo * 5;
+                
             }
             repaint();
             sleep(60);

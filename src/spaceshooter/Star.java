@@ -14,10 +14,10 @@ public class Star {
     Image image;
     int x, y, width = 5, height = 5 ;
     int j;
-    int Xmax = 890;
+    int Xmax = 900;
     int Ymax = 700;
-    int Xmax2 = 900;
-    int Xmin2 = 890;
+    //int Xmax2 = 900;
+    //int Xmin2 = 890;
     int min = 1;
     int Xdiff = Xmax - min;
     int Ydiff = Ymax - min;
@@ -28,9 +28,23 @@ public class Star {
     public void setX(int x) {
         this.x = x;
     }
+    
+    public int getX() {
+    	return x;
+    }
 
     public void setY(int y) {
         this.y = y;
+    }
+    
+    public void setTam(int sit) {
+    	if (sit == 1) { 
+    		width = 8;
+    		height = 8;
+    	}else {
+    		width = 5;
+    		height = 5;
+    	}
     }
 
     public void draw(Graphics2D g2d, double width, double height) {	
@@ -39,43 +53,13 @@ public class Star {
     }
     
     public Rectangle getBounds() {
-        return new Rectangle(x, y, width, height);
+        return new Rectangle((x), (y), (width), (height));
     }
     
-//    public void setLocation() {
-//        int i, j, n, m;
-//        if (j == 1) {
-//            y = (int) (Math.random() * 300 + 1);
-//            if (enemytype == 3 || enemytype == 4) {
-//                j = rn.nextInt(diff + 1);
-//                j += min;
-//                movement = j;
-//                if (enemytype == 4) {
-//                    initialpy = y;
-//                }
-//            }
-//        } else if (j > 1.5) {
-//            y = (int) (Math.random() * 115 + 496);
-//            if (enemytype == 3 || enemytype == 4) {
-//                j = rn.nextInt(diff + 1);
-//                j += min;
-//                movement = j;
-//                if (enemytype == 4) {
-//                    initialpy = y;
-//                }
-//            }
-//        } else {
-//            y = (int) (Math.random() * 255 + 300);
-//            if (enemytype == 3 || enemytype == 4) {
-//                j = rn.nextInt(diff + 1);
-//                j += min;
-//                movement = j;
-//                if (enemytype == 4) {
-//                    initialpy = y;
-//                }
-//            }
-//        }
-//
-//    }
+    public void setLocation() {
+    	y = rn.nextInt(Ydiff + 1);
+    	x = 900;
+    			
+    }
 
 }
