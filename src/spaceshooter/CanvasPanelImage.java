@@ -22,10 +22,12 @@ import javax.swing.JFrame;
  * @authors Iury, Vinicius and Daniel
  */
 public class CanvasPanelImage extends JPanel implements Runnable {
+    long secondbefore = 0;
     int turbotime;
     int thunderx = 900,
             thundery = 900;
     int turbo = 1;
+    boolean thunder = false;
     JFrame frame = new JFrame("Space Shooter");
     GameWindowHandler window;
     boolean inited = false;
@@ -42,16 +44,16 @@ public class CanvasPanelImage extends JPanel implements Runnable {
     int maxEnemy = 4;
     int minEnemy = 1;
     int diffEnemy = maxEnemy - minEnemy;
-    int maxMissile = 2;
+    int maxMissile = 10;
     int minMissile = 1;
     int diffMissile = maxMissile - minMissile;
     private boolean[] key_states = new boolean[256];
     int speedOfBullets = 20;
     int timeForBullet = 1;
-    int seconds = 90;
+    int seconds = 60;
     double theta;
     double px = 0, py = 0;
-    int numberOfEnemies = 15;
+    int numberOfEnemies = 30;
     int countEnemy = numberOfEnemies;
     int numberOfBullets = 25;
     int speedOfEnemies = 3;
@@ -65,8 +67,9 @@ public class CanvasPanelImage extends JPanel implements Runnable {
     int remainingMissiles = numberOfMissiles;
     int numberOfMissilesToShot = 3;
     int control = 0;
+    int strx = 900, stry = 900;
     Random rn = new Random();
-
+long startTime, secondss;
     Missile[] missiles;
     Missile[] sortmissiles;
     Thread thread;
@@ -102,6 +105,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 menuPanel.draw(g2d);
             } else if (!gameOver) {
                 g2d.drawImage(backGround, 0, 0, null);
+                
                 //carregando estrelas
                 for(int i = 0; i< numberOfStars; i++) {
                 	if(i<=150) {
@@ -117,6 +121,10 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 	
                 }
                 player.draw(g2d, theta);
+                g2d.setColor(Color.YELLOW);
+                g2d.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
+                g2d.drawString("PRESS SPACE", strx, stry);
+
                 //carregando images de inimigos
                 for (int v = 0; v < numberOfEnemies; v++) {
                     if (enemy[v].isAlive) {
@@ -141,7 +149,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 }
                 g2d.setFont(font);
                 g2d.drawString(String.valueOf(score), 420, 70);
-                g2d.drawImage(player.getThunder(), thunderx, thundery, 90, 80, null);
+                g2d.drawImage(player.getThunder(), thunderx, thundery, 80, 70, null);
                 //carregando as imagens das balas
                 for (int i = 0; i < numberOfBullets; i++) {
                     if (bullets1[i].fired) {
@@ -172,6 +180,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
     private void init() {
         addKeyListener(new KeyboardAdapter());
         //double n;
+        startTime = System.currentTimeMillis();
         mouse = new MouseDetector(this);
         player = new Player();
         gameOver = true;
@@ -269,22 +278,23 @@ public class CanvasPanelImage extends JPanel implements Runnable {
     public void play() {
         // System.out.println(player.y);
         while (play) {
+            secondss = (System.currentTimeMillis() - startTime) / 1000l;
         	for(int i = 0; i< numberOfStars; i++) {
         		switch(stars[i].tam){
         		    case 1:
-        		    	stars[i].x -= 1;
+        		    	stars[i].x -= turbo * 1;
         		    	break;
         		    case 2:
-        		    	stars[i].x -= 2;
+        		    	stars[i].x -= turbo *2;
         		    	break;
         		    case 3:
-        		    	stars[i].x -= 3;
+        		    	stars[i].x -=turbo * 3;
         		    	break;
         		    case 4:
-        		    	stars[i].x -= 4;
+        		    	stars[i].x -= turbo *4;
         		    	break;
         		    default:
-        		    	stars[i].x -= 5;
+        		    	stars[i].x -= turbo *5;
         		    	break;
         		}
         		if (stars[i].x <= 0) {
@@ -293,19 +303,19 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                  if (key_states[KeyEvent.VK_RIGHT] && player.x < 835) {
              		switch(stars[i].tam){
         		    case 1:
-        		    	stars[i].x -= 2;
+        		    	stars[i].x -=turbo * 2;
         		    	break;
         		    case 2:
-        		    	stars[i].x -= 3;
+        		    	stars[i].x -=turbo * 3;
         		    	break;
         		    case 3:
-        		    	stars[i].x -= 4;
+        		    	stars[i].x -=turbo * 4;
         		    	break;
         		    case 4:
-        		    	stars[i].x -= 5;
+        		    	stars[i].x -=turbo * 5;
         		    	break;
         		    default:
-        		    	stars[i].x -= 6;
+        		    	stars[i].x -= turbo *6;
         		    	break;
         		}
                 }
@@ -319,19 +329,19 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                         enemy[i].x = enemy[i].x - 1;
                     } else if (enemy[i].enemytype == 3) {
                         if (enemy[i].movement == 1) {
-                            enemy[i].x = enemy[i].x - 1;
-                            enemy[i].y = enemy[i].y + 1;
+                            enemy[i].x = enemy[i].x - turbo ;
+                            enemy[i].y = enemy[i].y + turbo;
                         } else if (enemy[i].movement == 2) {
-                            enemy[i].x = enemy[i].x - 1;
-                            enemy[i].y = enemy[i].y - 1;
+                            enemy[i].x = enemy[i].x - turbo;
+                            enemy[i].y = enemy[i].y - turbo;
                         }
                     } else if (enemy[i].enemytype == 4) {
                         if (enemy[i].movement == 1) {
-                            enemy[i].x = enemy[i].x - 1;
-                            enemy[i].y = enemy[i].y + 1;
+                            enemy[i].x = enemy[i].x - turbo;
+                            enemy[i].y = enemy[i].y + turbo;
                         } else if (enemy[i].movement == 2) {
-                            enemy[i].x = enemy[i].x - 1;
-                            enemy[i].y = enemy[i].y - 1;
+                            enemy[i].x = enemy[i].x + turbo;
+                            enemy[i].y = enemy[i].y - turbo;
                         }
                         if (enemy[i].y > enemy[i].initialpy + 50) {
                             if (enemy[i].movement == 1) {
@@ -477,12 +487,47 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 if (enemy[rand].isAlive) {
                     addEnemyBullet(enemy[rand]);
                 }
-                turbotime++;
+                //if (thunder == false){
+               // turbotime++;
+               // }
             }
-            if (turbotime == 6){
-                thunderx = 150;
-                thundery = 3;
+            
+            if (secondbefore != secondss){
+            if(secondss % 12 == 0){
+                if(thunder == false){
+                       thunderx = 150;
+                thundery = 15;
+                    thunder = true;
+                    strx = 210;
+                    stry = 60;
+                }else if (thunder == true && turbo == 5){
+                    thunderx = 900;
+                thundery = 900;
+                turbo = 1;
+                    thunder = false;
+                    
+                }
+            }
+            }
+            secondbefore = secondss;
+            //if (timeForBullet % seconds == 0 && thunder == true) {
+            //    turbotime--;
+            //}
+           // if (turbotime == 15){
+               // thunderx = 150;
+               // thundery = 15;
+               // thunder = true;
+           // }
+           // if (turbotime == 0){
+              //  thunderx = 900;
+               // thundery = 900;
+               // turbo = 1;
+                //thunder = false;
+           // }
+            if(key_states[KeyEvent.VK_SPACE] && thunder == true){
                 turbo = 5;
+                        strx = 900;
+                    stry = 900;
             }
             if (remainingHearts == 0) {
                 result.won = false;
@@ -497,16 +542,16 @@ public class CanvasPanelImage extends JPanel implements Runnable {
                 resultPanel = true;
             }
             if (key_states[KeyEvent.VK_UP] && player.y > 0) {
-                player.y = player.y - turbo * 5;
+                player.y = player.y - 5;
             }
             if (key_states[KeyEvent.VK_DOWN] && player.y < 635) {
-                player.y = player.y + turbo * 5;
+                player.y = player.y +  5;
             }
             if (key_states[KeyEvent.VK_LEFT] && player.x > 0 ){
-                player.x = player.x - turbo * 5;
+                player.x = player.x -  5;
             }
             if (key_states[KeyEvent.VK_RIGHT] && player.x < 835) {
-                player.x = player.x + turbo * 5;
+                player.x = player.x +  5;
                 
             }
             repaint();
