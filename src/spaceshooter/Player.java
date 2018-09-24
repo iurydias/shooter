@@ -13,6 +13,7 @@ import javax.swing.ImageIcon;
 public class Player {
 
     Image image;
+    Image thunder;
     double x = 490,
             y = 290;
     boolean isAlive = true;
@@ -22,10 +23,16 @@ public class Player {
         if (image == null) {
             image = new ImageIcon(this.getClass().getResource("spaceship1.png")).getImage();
         }
+        if (thunder == null) {
+            thunder = new ImageIcon(this.getClass().getResource("thunder.png")).getImage();
+        }
     }
 
     public Image getImage() {
         return image;
+    }
+     public Image getThunder() {
+        return thunder;
     }
 
     public Rectangle getBounds() {
