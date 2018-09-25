@@ -10,6 +10,7 @@ public class Bullet {
     int x;
     int y;
     boolean fired = false;
+    double theta;
 
     public Bullet(int x, int y, double theta) {
         if (image == null) {

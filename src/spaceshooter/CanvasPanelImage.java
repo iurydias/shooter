@@ -22,6 +22,7 @@ import javax.swing.JFrame;
  * @authors Iury, Vinicius and Daniel
  */
 public class CanvasPanelImage extends JPanel implements Runnable {
+int closerposition;
     long secondbefore = 0;
     int turbotime;
     int thunderx = 900,
@@ -69,7 +70,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
     int control = 0;
     int strx = 900, stry = 900;
     Random rn = new Random();
-long startTime, secondss;
+    long startTime, secondss;
     Missile[] missiles;
     Missile[] sortmissiles;
     Thread thread;
@@ -105,20 +106,20 @@ long startTime, secondss;
                 menuPanel.draw(g2d);
             } else if (!gameOver) {
                 g2d.drawImage(backGround, 0, 0, null);
-                
+
                 //carregando estrelas
-                for(int i = 0; i< numberOfStars; i++) {
-                	if(i<=150) {
-                		g2d.setColor(Color.WHITE);
-                		g2d.fillOval(stars[i].x, stars[i].y, stars[i].tam, stars[i].tam);
-                	}else if(i<=180) {
-                		g2d.setColor(Color.YELLOW);
-                		g2d.fillOval(stars[i].x, stars[i].y, stars[i].tam, stars[i].tam);
-                	}else {
-                		g2d.setColor(Color.BLUE);
-                    	g2d.fillOval(stars[i].x, stars[i].y, stars[i].tam, stars[i].tam);
-                	}
-                	
+                for (int i = 0; i < numberOfStars; i++) {
+                    if (i <= 150) {
+                        g2d.setColor(Color.WHITE);
+                        g2d.fillOval(stars[i].x, stars[i].y, stars[i].tam, stars[i].tam);
+                    } else if (i <= 180) {
+                        g2d.setColor(Color.YELLOW);
+                        g2d.fillOval(stars[i].x, stars[i].y, stars[i].tam, stars[i].tam);
+                    } else {
+                        g2d.setColor(Color.BLUE);
+                        g2d.fillOval(stars[i].x, stars[i].y, stars[i].tam, stars[i].tam);
+                    }
+
                 }
                 player.draw(g2d, theta);
                 g2d.setColor(Color.YELLOW);
@@ -244,8 +245,8 @@ long startTime, secondss;
         }
         stars = new Star[numberOfStars];
         for (int i = 0; i < numberOfStars; i++) {
-       		stars[i] = new Star();
-       }
+            stars[i] = new Star();
+        }
     }
 
     private class KeyboardAdapter extends KeyAdapter {
@@ -279,57 +280,58 @@ long startTime, secondss;
         // System.out.println(player.y);
         while (play) {
             secondss = (System.currentTimeMillis() - startTime) / 1000l;
-        	for(int i = 0; i< numberOfStars; i++) {
-        		switch(stars[i].tam){
-        		    case 1:
-        		    	stars[i].x -= turbo * 1;
-        		    	break;
-        		    case 2:
-        		    	stars[i].x -= turbo *2;
-        		    	break;
-        		    case 3:
-        		    	stars[i].x -=turbo * 3;
-        		    	break;
-        		    case 4:
-        		    	stars[i].x -= turbo *4;
-        		    	break;
-        		    default:
-        		    	stars[i].x -= turbo *5;
-        		    	break;
-        		}
-        		if (stars[i].x <= 0) {
-        			stars[i].setLocation();
-        		}
-                 if (key_states[KeyEvent.VK_RIGHT] && player.x < 835) {
-             		switch(stars[i].tam){
-        		    case 1:
-        		    	stars[i].x -=turbo * 2;
-        		    	break;
-        		    case 2:
-        		    	stars[i].x -=turbo * 3;
-        		    	break;
-        		    case 3:
-        		    	stars[i].x -=turbo * 4;
-        		    	break;
-        		    case 4:
-        		    	stars[i].x -=turbo * 5;
-        		    	break;
-        		    default:
-        		    	stars[i].x -= turbo *6;
-        		    	break;
-        		}
+            for (int i = 0; i < numberOfStars; i++) {
+                switch (stars[i].tam) {
+                    case 1:
+                        stars[i].x -= turbo * 1;
+                        break;
+                    case 2:
+                        stars[i].x -= turbo * 2;
+                        break;
+                    case 3:
+                        stars[i].x -= turbo * 3;
+                        break;
+                    case 4:
+                        stars[i].x -= turbo * 4;
+                        break;
+                    default:
+                        stars[i].x -= turbo * 5;
+                        break;
                 }
-        	}
-        	
+                if (stars[i].x <= 0) {
+                    stars[i].setLocation();
+                }
+                if (key_states[KeyEvent.VK_RIGHT] && player.x < 835) {
+                    switch (stars[i].tam) {
+                        case 1:
+                            stars[i].x -= turbo * 2;
+                            break;
+                        case 2:
+                            stars[i].x -= turbo * 3;
+                            break;
+                        case 3:
+                            stars[i].x -= turbo * 4;
+                            break;
+                        case 4:
+                            stars[i].x -= turbo * 5;
+                            break;
+                        default:
+                            stars[i].x -= turbo * 6;
+                            break;
+                    }
+                }
+            }
+
             if (player.isAlive) {
                 for (int i = 0; i < numberOfEnemies; i++) {
+                   
                     // enemy[i].y = enemy[i].y
                     //       - (int) (2 * Math.sin(enemy[i].theta));
                     if (enemy[i].enemytype == 1 || enemy[i].enemytype == 2) {
                         enemy[i].x = enemy[i].x - 1;
                     } else if (enemy[i].enemytype == 3) {
                         if (enemy[i].movement == 1) {
-                            enemy[i].x = enemy[i].x - turbo ;
+                            enemy[i].x = enemy[i].x - turbo;
                             enemy[i].y = enemy[i].y + turbo;
                         } else if (enemy[i].movement == 2) {
                             enemy[i].x = enemy[i].x - turbo;
@@ -340,7 +342,7 @@ long startTime, secondss;
                             enemy[i].x = enemy[i].x - turbo;
                             enemy[i].y = enemy[i].y + turbo;
                         } else if (enemy[i].movement == 2) {
-                            enemy[i].x = enemy[i].x + turbo;
+                            enemy[i].x = enemy[i].x - turbo;
                             enemy[i].y = enemy[i].y - turbo;
                         }
                         if (enemy[i].y > enemy[i].initialpy + 50) {
@@ -413,8 +415,7 @@ long startTime, secondss;
                     }
                 }
             }
-            
-         
+
             for (int i = 0; i < numberOfEnemyBullets; i++) {
                 if (enemyBullets[i].fired) {
                     if (player.getBounds().intersects(
@@ -449,7 +450,8 @@ long startTime, secondss;
             }
 
             for (int i = 0; i < numberOfMissilesToShot; i++) {
-                if (shotmissiles[i].fired) {
+                                        if (shotmissiles[i].fired) {
+                                            
                     for (int v = 0; v < numberOfEnemies; v++) {
                         if (enemy[v].isAlive) {
                             if (enemy[v].getBounds().intersects(
@@ -464,6 +466,8 @@ long startTime, secondss;
                                     score += 200;
                                 }
                                 enemy[v].isAlive = false;
+                                enemy[v].x = 900;
+                                enemy[v].y = 900;
                                 countEnemy--;
                                 int j;
                                 j = rn.nextInt(diffMissile + 1);
@@ -474,11 +478,21 @@ long startTime, secondss;
                                 }
                                 shotmissiles[i].x = 900;
                                 shotmissiles[i].y = 900;
+                                                        //shotmissiles[i].fired = true;
+
 
                             }
                         }
                     }
-                    shotmissiles[i].x = shotmissiles[i].x + 1 * 10;
+                    if(shotmissiles[i].x != 900 && shotmissiles[i].y != 900){
+                    shotmissiles[i].theta = Math.atan2(shotmissiles[i].y - (enemy[closerposition].y + 40),
+							shotmissiles[i].x - (enemy[closerposition].x + 50));
+					shotmissiles[i].y = shotmissiles[i].y
+						- (int) (20 * Math.sin(shotmissiles[i].theta));
+					shotmissiles[i].x = shotmissiles[i].x
+							- (int) (20 * Math.cos(shotmissiles[i].theta));
+                    }
+                   // shotmissiles[i].x = shotmissiles[i].x + 1 * 10;
                 }
             }
 
@@ -488,46 +502,47 @@ long startTime, secondss;
                     addEnemyBullet(enemy[rand]);
                 }
                 //if (thunder == false){
-               // turbotime++;
-               // }
+                // turbotime++;
+                // }
             }
-            
-            if (secondbefore != secondss){
-            if(secondss % 12 == 0){
-                if(thunder == false){
-                       thunderx = 150;
-                thundery = 15;
-                    thunder = true;
-                    strx = 210;
-                    stry = 60;
-                }else if (thunder == true && turbo == 5){
-                    thunderx = 900;
-                thundery = 900;
-                turbo = 1;
-                    thunder = false;
-                    
+
+            if (secondbefore != secondss) {
+                if (secondss % 12 == 0) {
+                    if (thunder == false) {
+                        thunderx = 150;
+                        thundery = 15;
+                        thunder = true;
+                        strx = 210;
+                        stry = 60;
+                    } else if (thunder == true && turbo == 5) {
+                        thunderx = 900;
+                        thundery = 900;
+                        turbo = 1;
+                        thunder = false;
+
+                    }
                 }
-            }
             }
             secondbefore = secondss;
             //if (timeForBullet % seconds == 0 && thunder == true) {
             //    turbotime--;
             //}
-           // if (turbotime == 15){
-               // thunderx = 150;
-               // thundery = 15;
-               // thunder = true;
-           // }
-           // if (turbotime == 0){
-              //  thunderx = 900;
-               // thundery = 900;
-               // turbo = 1;
-                //thunder = false;
-           // }
-            if(key_states[KeyEvent.VK_SPACE] && thunder == true){
+            // if (turbotime == 15){
+            // thunderx = 150;
+            // thundery = 15;
+            // thunder = true;
+            // }
+            // if (turbotime == 0){
+            //  thunderx = 900;
+            // thundery = 900;
+            // turbo = 1;
+            //thunder = false;
+            // }
+            if (key_states[KeyEvent.VK_SPACE] && thunder == true) {
                 turbo = 5;
-                        strx = 900;
-                    stry = 900;
+                strx = 900;
+                stry = 900;
+                secondss = 0;
             }
             if (remainingHearts == 0) {
                 result.won = false;
@@ -545,14 +560,14 @@ long startTime, secondss;
                 player.y = player.y - 5;
             }
             if (key_states[KeyEvent.VK_DOWN] && player.y < 635) {
-                player.y = player.y +  5;
+                player.y = player.y + 5;
             }
-            if (key_states[KeyEvent.VK_LEFT] && player.x > 0 ){
-                player.x = player.x -  5;
+            if (key_states[KeyEvent.VK_LEFT] && player.x > 0) {
+                player.x = player.x - 5;
             }
             if (key_states[KeyEvent.VK_RIGHT] && player.x < 835) {
-                player.x = player.x +  5;
-                
+                player.x = player.x + 5;
+
             }
             repaint();
             sleep(60);
@@ -782,5 +797,5 @@ long startTime, secondss;
             start = System.currentTimeMillis();
         }
     }
-    
+
 }

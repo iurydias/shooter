@@ -8,7 +8,7 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.SwingUtilities;
 
 public class MouseDetector extends MouseAdapter implements MouseMotionListener {
-
+    int closer = Integer.MAX_VALUE;
     int x = 0;
     int y = 0;
     Point pClicked = new Point(0, 0);
@@ -53,7 +53,13 @@ public class MouseDetector extends MouseAdapter implements MouseMotionListener {
                 game.addBullet(1);
                 if (game.gun == 2 && game.remainingMissiles > 0){
                 game.missiles[--game.remainingMissiles].setImage();
+                 for (int i = 0; i < game.numberOfEnemies; i++) {
+                    if (game.enemy[i].x < closer && game.enemy[i].x >= 0){
+                        closer = game.enemy[i].x;
+                        game.closerposition = i;
+                    }
             }
+                }
             }
             if (SwingUtilities.isRightMouseButton(e)) {
                 if (game.gun == 1) {

@@ -12,7 +12,6 @@ public class Missile {
     int x;
     int y;
     boolean fired = false;
-
     public Missile(int i) {
         if (image1 == null) {
             image1 = new ImageIcon(this.getClass().getResource("gui_missile.png")).getImage();
