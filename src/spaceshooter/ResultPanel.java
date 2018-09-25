@@ -55,18 +55,18 @@ public class ResultPanel {
 		if(won){
 			g2d.setColor(Color.GREEN);
 			g2d.setFont(game.font);
-			g2d.drawString("You Have WON!", 425, 100);
+			g2d.drawString("You Have WON!", 250, 100);
 			g2d.setColor(Color.WHITE);
 			g2d.setFont(game.font);
 			//if(!painted) score = random.nextInt(10000);
-			g2d.drawString(String.valueOf(game.score), 500, 135);
+			g2d.drawString(String.valueOf(game.score), 400, 150);
 		}else{
 			g2d.setColor(Color.RED);
 			g2d.setFont(game.font);
-			g2d.drawString("You Have LOST!", 425, 100);
+			g2d.drawString("You Have LOST!", 250, 100);
 			g2d.setColor(Color.WHITE);
 			g2d.setFont(game.font);
-			g2d.drawString(String.valueOf(game.score), 500, 135);
+			g2d.drawString(String.valueOf(game.score), 400, 150);
 		}
 
 		for (int i = 0; i < 2; i++) {
@@ -76,8 +76,8 @@ public class ResultPanel {
 		}
 		
 		g2d.setColor(Color.white);
-		g2d.drawString("Menu", 500, 235);
-		g2d.drawString("Exit", 500, 316);
+		g2d.drawString("Menu", 375, 235);
+		g2d.drawString("Exit", 375, 316);
 
 	}
 

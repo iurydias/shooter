@@ -29,7 +29,7 @@ public class HelpWindow extends JFrame implements ActionListener{
 		setSize(450,350);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		text.setText("Use :\n\tW : to move up.\n\tS : to move down.\n\tA : to move left.\n\tD : to move right.\n Use left mouse button to fire bullets.\n\n[hint] : right mouse button is your trump card.");
+		text.setText("Comandos:\n\tW : mover para cima.\n\tS : mover para baixo.\n\tA : mover para esquerda.\n\tD : mover para direita.\n\tBotão esquerdo para atirar.\n\n\tBotão direito para habilitar os mísseis.\n\n\tEspaço: ativar o modo turbo.\n\n\tBoa Sorte!");
 		text.setEditable(false);
 		label.setIcon(imageIcon);
 		ok.addActionListener(this);

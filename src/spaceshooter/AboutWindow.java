@@ -29,7 +29,7 @@ public class AboutWindow extends JFrame implements ActionListener{
 		setSize(450,320);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		text.setText("Hello everyone,\n\nThis is a game project for java programming II cource\n \"ICS201\" taught at KFUPM \"King Fahad University in Saudi Arabia\".\n This game was developed by Mohammad Aljarbou. \n\n2014");
+		text.setText("Esse jogo foi desenvolvido para a matéria Computação Gráfica\n\nFaculdade Área1\n\nOberdan é o melhor professor!\n\n\n\n\nALUNOS: Daniel, Iury e Vinicius");
 		text.setEditable(false);
 		label.setIcon(imageIcon);
 		ok.addActionListener(this);

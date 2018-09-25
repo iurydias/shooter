@@ -17,7 +17,7 @@ import javax.swing.ImageIcon;
 public class MenuPanel {
 
 	String projectName = "SPACE SHOOTER";
-	String myName = "By: Daniel, Iury and Vinícius";
+	String myName = "By: Daniel, Iury and Vinicius";
 	String about = "About";
 	String help = "Help";
 	String exit = "Exit";
@@ -63,11 +63,11 @@ public class MenuPanel {
 		g2d.drawImage(game.opacity, 0, 0, null);
 		g2d.setColor(Color.BLUE);
 		g2d.setFont(game.font);
-		g2d.drawString("SPACE SHOOTER", 360, 100);
+		g2d.drawString("SPACE SHOOTER", 250, 100);
 		g2d.setColor(Color.WHITE);
                 Font font = new Font(Font.MONOSPACED, Font.BOLD, 32);
 		g2d.setFont(font);
-		g2d.drawString("By: Daniel, Iury and Vinícius", 280, 135);
+		g2d.drawString("By: Daniel, Iury and Vinicius", 280, 600);
                 g2d.setFont(game.font);
 		for (int i = 0; i < 4; i++) {
 			if (activated[i]) {
