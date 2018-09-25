@@ -162,7 +162,7 @@ int closerposition;
                 for (int i = 0; i < numberOfMissilesToShot; i++) {
                     if (shotmissiles[i].fired) {
                         g2d.drawImage(shotmissiles[i].getImage(), shotmissiles[i].x,
-                                shotmissiles[i].y, null);
+                                shotmissiles[i].y, 140,60,null);
                     }
                 }
                 //carregando as imagens dos inimigos
@@ -241,7 +241,7 @@ int closerposition;
         }
         enemyBullets = new Bullet[numberOfEnemyBullets];
         for (int i = 0; i < numberOfEnemyBullets; i++) {
-            enemyBullets[i] = new Bullet(5);
+            enemyBullets[i] = new Bullet(1);
         }
         stars = new Star[numberOfStars];
         for (int i = 0; i < numberOfStars; i++) {
@@ -519,7 +519,7 @@ int closerposition;
                         thundery = 900;
                         turbo = 1;
                         thunder = false;
-
+                        player.setBackSpaceship();
                     }
                 }
             }
@@ -543,6 +543,7 @@ int closerposition;
                 strx = 900;
                 stry = 900;
                 secondss = 0;
+                player.setTurboSpaceship();
             }
             if (remainingHearts == 0) {
                 result.won = false;

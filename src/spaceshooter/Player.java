@@ -34,6 +34,12 @@ public class Player {
      public Image getThunder() {
         return thunder;
     }
+    public void setTurboSpaceship(){
+    image = new ImageIcon(this.getClass().getResource("spaceship-boosted2.png")).getImage();
+}
+    public void setBackSpaceship(){
+    image = new ImageIcon(this.getClass().getResource("spaceship1.png")).getImage();
+}
 
     public Rectangle getBounds() {
         return new Rectangle((int) x + 20, (int) y + 20, image.getWidth(null), image.getHeight(null));

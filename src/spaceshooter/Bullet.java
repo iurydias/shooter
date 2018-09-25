@@ -20,10 +20,13 @@ public class Bullet {
     }
 
     public Bullet(int i) {
-        if (image == null) {
+        if (image == null && i == 1) {
             image = new ImageIcon(this.getClass().getResource("bullet3.png")).getImage();
+        }else{
+                image = new ImageIcon(this.getClass().getResource("missile.png")).getImage();
         }
     }
+   
 
     public Image getImage() {
         return image;
