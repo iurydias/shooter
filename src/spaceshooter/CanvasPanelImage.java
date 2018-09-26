@@ -172,6 +172,8 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 						g2d.drawImage(enemyBullets[i].getImage(), enemyBullets[i].x, enemyBullets[i].y, null);
 					}
 				}
+				g2d.setFont(font);
+				g2d.drawString("STAGE:" + String.valueOf(nextLevel+1), 40, 650);
 			} else if (resultPanel) {
 				result.draw(g2d);
 			}
