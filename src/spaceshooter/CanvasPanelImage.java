@@ -24,6 +24,11 @@ import javax.swing.JFrame;
 public class CanvasPanelImage extends JPanel implements Runnable {
 	int closerposition;
 	int difficult = 0;
+	int nextLevel = 0;
+	int easyNumberEnemies = 10;
+	int normalNumberEnemies = 20;
+	int hardNumberEnemies = 40;
+	int[] tipoEnemy;
 	long secondbefore = 0;
 	int turbotime;
 	int thunderx = 900, thundery = 900;
@@ -54,7 +59,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 	int seconds = 60;
 	double theta;
 	double px = 0, py = 0;
-	int numberOfEnemies = 30;
+	int numberOfEnemies = 160;
 	int countEnemy = numberOfEnemies;
 	int numberOfBullets = 25;
 	int speedOfEnemies = 3;
@@ -199,28 +204,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 		}
 
 		thread = new Thread(this);
-		enemy = new Enemy[numberOfEnemies];
-		for (int i = 0; i < numberOfEnemies; i++) {
-			Random rn = new Random();
-			int j = rn.nextInt(diffEnemy + 1);
-			j += minEnemy;
-			if (j == 1) {
-				enemy[i] = new Enemy(j);
-			} else if (j == 2) {
-				enemy[i] = new Enemy(j);
-			} else if (j == 3) {
-				enemy[i] = new Enemy(j);
-				// j = rn.nextInt(diff + 1);
-				// j += min;
-				// if (j == 1 || j == 2) {
-				// enemy[i].movement = 1;
-				// } else if (j == 3 || j == 4) {
-				// enemy[i].movement = 2;
-				// }
-			} else if (j == 4) {
-				enemy[i] = new Enemy(j);
-			}
-		}
+
 		bullets1 = new Bullet[numberOfBullets];
 		for (int i = 0; i < numberOfBullets; i++) {
 			bullets1[i] = new Bullet(210, 200, 0);
@@ -536,11 +520,31 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				gameOver = true;
 				resultPanel = true;
 			}
+
 			if (countEnemy == 0) {
-				result.won = true;
-				play = false;
-				gameOver = true;
-				resultPanel = true;
+				nextLevel++;
+				if (difficult > 0) {
+					if (nextLevel == 1)
+						reset(1, false);
+					if (nextLevel == 2)
+						reset(2, false);
+
+					if (nextLevel == 3)
+						reset(3, false);
+					if (nextLevel == 4) {
+						reset(4, false);
+						difficult = 0;
+					}
+
+				}
+
+				else {
+					result.won = true;
+					play = false;
+					gameOver = true;
+					resultPanel = true;
+				}
+
 			}
 			if (key_states[KeyEvent.VK_W] && player.y > 0) {
 				player.y = player.y - 5;
@@ -675,7 +679,8 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 
 			if (menuPanel.clicked && menuPanel.rectangle[4].contains(mouse.pClicked)) {
 				menuPanel.clicked = false;
-				numberOfEnemies = 8;
+				difficult = 1;
+				numberOfEnemies = easyNumberEnemies;
 				numberOfHearts = 3;
 				remainingHearts = 3;
 				remainingMissiles = numberOfMissiles;
@@ -683,7 +688,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				seconds = 90;
 				score = 0;
 				countEnemy = numberOfEnemies;
-				reset();
+				reset(0, true);
 				mainPanel = false;
 				play = true;
 				gameOver = false;
@@ -691,7 +696,8 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 			}
 			if (menuPanel.clicked && menuPanel.rectangle[5].contains(mouse.pClicked)) {
 				menuPanel.clicked = false;
-				numberOfEnemies = 13;
+				difficult = 2;
+				numberOfEnemies = normalNumberEnemies;
 				numberOfHearts = 3;
 				remainingHearts = 3;
 				remainingMissiles = numberOfMissiles;
@@ -699,7 +705,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				seconds = 70;
 				score = 0;
 				countEnemy = numberOfEnemies;
-				reset();
+				reset(0, true);
 				mainPanel = false;
 				play = true;
 				gameOver = false;
@@ -707,7 +713,8 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 			}
 			if (menuPanel.clicked && menuPanel.rectangle[6].contains(mouse.pClicked)) {
 				menuPanel.clicked = false;
-				numberOfEnemies = 20;
+				difficult = 3;
+				numberOfEnemies = hardNumberEnemies;
 				numberOfHearts = 3;
 				remainingHearts = 3;
 				remainingMissiles = numberOfMissiles;
@@ -715,7 +722,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				seconds = 60;
 				score = 0;
 				countEnemy = numberOfEnemies;
-				reset();
+				reset(0, true);
 				mainPanel = false;
 				play = true;
 				gameOver = false;
@@ -727,11 +734,76 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 		}
 	}
 
-	public void reset() {
+	public void newLevel(int numberOfEnemies, int level) {
+		countEnemy = numberOfEnemies;
+		enemy = new Enemy[numberOfEnemies];
+		tipoEnemy = new int[numberOfEnemies];
+		if (level == 0) {
+			int j;
+			for (j = 0; j < numberOfEnemies; j++) {
+				tipoEnemy[j] = 1;
+			}
 
-		for (int i = 0; i < numberOfHearts; i++) {
-			hearts[i].setHealth();
+		} else if (level == 1) {
+			int j;
+			for (j = 0; j < numberOfEnemies / 2; j++) {
+				tipoEnemy[j] = 1;
+			}
+
+			for (j = j + 0; j < numberOfEnemies; j++) {
+				tipoEnemy[j] = 2;
+			}
+
+		} else if (level == 2) {
+			int j;
+			for (j = 0; j < numberOfEnemies / 2; j++) {
+				tipoEnemy[j] = 2;
+			}
+
+			for (j = j + 0; j < numberOfEnemies; j++) {
+				tipoEnemy[j] = 3;
+			}
+		} else if (level == 3) {
+			int j;
+			for (j = 0; j < numberOfEnemies / 2; j++) {
+				tipoEnemy[j] = 3;
+			}
+
+			for (j = j + 0; j < numberOfEnemies; j++) {
+				tipoEnemy[j] = 4;
+			}
+
+		} else if (level == 4) {
+			int j;
+			for (j = 0; j < numberOfEnemies; j++) {
+				tipoEnemy[j] = 4;
+			}
 		}
+		for (int i = 0; i < numberOfEnemies; i++) {
+
+			if (tipoEnemy[i] == 1) {
+				enemy[i] = new Enemy(tipoEnemy[i]);
+			} else if (tipoEnemy[i] == 2) {
+				enemy[i] = new Enemy(tipoEnemy[i]);
+			} else if (tipoEnemy[i] == 3) {
+				enemy[i] = new Enemy(tipoEnemy[i]);
+				// j = rn.nextInt(diff + 1);
+				// j += min;
+				// if (j == 1 || j == 2) {
+				// enemy[i].movement = 1;
+				// } else if (j == 3 || j == 4) {
+				// enemy[i].movement = 2;
+				// }
+			} else if (tipoEnemy[i] == 4) {
+				enemy[i] = new Enemy(tipoEnemy[i]);
+			}
+		}
+
+	}
+
+	public void reset(int level, boolean test) {
+		newLevel(numberOfEnemies, level);
+
 		for (int i = 0; i < numberOfSortMissiles; i++) {
 			sortmissiles[i].fired = false;
 		}
@@ -746,6 +818,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 			} else {
 				enemy[i].enemylife = 5;
 			}
+
 		}
 
 		for (int i = 0; i < numberOfBullets; i++) {
@@ -754,15 +827,20 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 		for (int i = 0; i < numberOfMissilesToShot; i++) {
 			shotmissiles[i].fired = false;
 		}
-		for (int i = 0; i < numberOfMissiles; i++) {
-			missiles[i].setHealth();
-		}
+
 		for (int i = 0; i < numberOfSortMissiles; i++) {
 			sortmissiles[i].fired = false;
 		}
-		player.x = 1080 / 2 - 50;
-		player.y = 340 - 40;
-
+		if (test == true) {
+			for (int i = 0; i < numberOfHearts; i++) {
+				hearts[i].setHealth();
+			}
+			for (int i = 0; i < numberOfMissiles; i++) {
+				missiles[i].setHealth();
+			}
+			player.x = 1080 / 2 - 50;
+			player.y = 340 - 40;
+		}
 	}
 
 	public static void main(String[] args) {
