@@ -73,7 +73,6 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 	int numberOfMissiles = 3;
 	int remainingMissiles = numberOfMissiles;
 	int numberOfMissilesToShot = 3;
-	int control = 0;
 	int strx = 900, stry = 900;
 	Random rn = new Random();
 	long startTime, secondss;
@@ -164,7 +163,8 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				// carregando as imagens das balas
 				for (int i = 0; i < numberOfMissilesToShot; i++) {
 					if (shotmissiles[i].fired) {
-						g2d.drawImage(shotmissiles[i].getImage(), shotmissiles[i].x, shotmissiles[i].y, 140, 60, null);
+						g2d.drawImage(shotmissiles[i].getImage(), shotmissiles[i].x, shotmissiles[i].y, null);
+                                                //140, 60
 					}
 				}
 				// carregando as imagens dos inimigos
@@ -219,7 +219,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 
 		shotmissiles = new Bullet[numberOfBullets];
 		for (int i = 0; i < numberOfBullets; i++) {
-			shotmissiles[i] = new Bullet(2);
+			shotmissiles[i] = new Bullet(1);
 		}
 		enemyBullets = new Bullet[numberOfEnemyBullets];
 		for (int i = 0; i < numberOfEnemyBullets; i++) {
@@ -383,7 +383,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 							}
 						}
 					}
-					if (bullets1[i].x < -100 || bullets1[i].x > 1180 || bullets1[i].y < -100 || bullets1[i].y > 760) {
+					if (bullets1[i].x < -100 || bullets1[i].x > 900 || bullets1[i].y < -100 || bullets1[i].y > 760) {
 						bullets1[i].fired = false;
 					} else {
 						// bullets[i].y = bullets[i].y
@@ -427,7 +427,6 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 
 			for (int i = 0; i < numberOfMissilesToShot; i++) {
 				if (shotmissiles[i].fired) {
-
 					for (int v = 0; v < numberOfEnemies; v++) {
 						if (enemy[v].isAlive) {
 							if (enemy[v].getBounds().intersects(shotmissiles[i].getBounds())) {
@@ -441,8 +440,8 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 									score += 200;
 								}
 								enemy[v].isAlive = false;
-								enemy[v].x = 900;
-								enemy[v].y = 900;
+								enemy[v].x = 2000;
+								enemy[v].y = 2000;
 								countEnemy--;
 								int j;
 								j = rn.nextInt(diffMissile + 1);
@@ -451,14 +450,14 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 								if (j == 1) {
 									addMissile(enemy[v]);
 								}
-								shotmissiles[i].x = 900;
-								shotmissiles[i].y = 900;
-								// shotmissiles[i].fired = true;
+								shotmissiles[i].x = 2000;
+								shotmissiles[i].y = 2000;
+								 //shotmissiles[i].fired = false;
 
 							}
 						}
 					}
-					if (shotmissiles[i].x != 900 && shotmissiles[i].y != 900) {
+					if (shotmissiles[i].x > 0 && shotmissiles[i].x < 900 && shotmissiles[i].y > 0 && shotmissiles[i].y < 635) {
 						shotmissiles[i].theta = Math.atan2(shotmissiles[i].y - (enemy[closerposition].y + 40),
 								shotmissiles[i].x - (enemy[closerposition].x + 50));
 						shotmissiles[i].y = shotmissiles[i].y - (int) (20 * Math.sin(shotmissiles[i].theta));
@@ -517,6 +516,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				strx = 900;
 				stry = 900;
 				secondss = 0;
+                                secondbefore = 0;
 				player.setTurboSpaceship();
 			}
 			if (remainingHearts == 0) {
@@ -688,7 +688,8 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				difficult = 1;
 				numberOfEnemies = easyNumberEnemies;
 				numberOfHearts = 3;
-				remainingHearts = 3;
+				remainingHearts = numberOfHearts;
+                                numberOfMissiles = 3;
 				remainingMissiles = numberOfMissiles;
 				numberOfMissilesToShot = 3;
 				seconds = 90;
@@ -706,7 +707,8 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				difficult = 2;
 				numberOfEnemies = normalNumberEnemies;
 				numberOfHearts = 3;
-				remainingHearts = 3;
+				remainingHearts = numberOfHearts;
+                                numberOfMissiles = 3;
 				remainingMissiles = numberOfMissiles;
 				numberOfMissilesToShot = 3;
 				seconds = 70;
@@ -724,7 +726,8 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				difficult = 3;
 				numberOfEnemies = hardNumberEnemies;
 				numberOfHearts = 3;
-				remainingHearts = 3;
+				remainingHearts = numberOfHearts;
+                                numberOfMissiles = 3;
 				remainingMissiles = numberOfMissiles;
 				numberOfMissilesToShot = 3;
 				seconds = 60;
