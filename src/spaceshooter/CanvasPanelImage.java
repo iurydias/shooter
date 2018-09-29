@@ -9,13 +9,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import javax.swing.JPanel;
+import java.awt.Image;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.Image;
 import java.util.Random;
-import javax.swing.ImageIcon;
+
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  *
@@ -164,7 +164,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				for (int i = 0; i < numberOfMissilesToShot; i++) {
 					if (shotmissiles[i].fired) {
 						g2d.drawImage(shotmissiles[i].getImage(), shotmissiles[i].x, shotmissiles[i].y, null);
-                                                //140, 60
+						// 140, 60
 					}
 				}
 				// carregando as imagens dos inimigos
@@ -174,7 +174,12 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 					}
 				}
 				g2d.setFont(font);
-				g2d.drawString("STAGE:" + String.valueOf(nextLevel + 1), 40, 650);
+				if (nextLevel == 5) {
+					g2d.drawString("STAGE:BOSS", 40, 650);
+
+				} else {
+					g2d.drawString("STAGE:" + String.valueOf(nextLevel + 1), 40, 650);
+				}
 			} else if (resultPanel) {
 				result.draw(g2d);
 			}
@@ -319,7 +324,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 							enemy[i].x = enemy[i].x - turbo - speedOfEnemies;
 							enemy[i].y = enemy[i].y - turbo - speedOfEnemies;
 						}
-					} else if (enemy[i].enemytype == 4) {
+					} else if (enemy[i].enemytype == 4 || enemy[i].enemytype == 5) {
 						if (enemy[i].movement == 1) {
 							enemy[i].x = enemy[i].x - turbo - speedOfEnemies;
 							enemy[i].y = enemy[i].y + turbo + speedOfEnemies;
@@ -343,7 +348,11 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 						}
 					}
 					if (enemy[i].x < -100 || enemy[i].y < -100 || enemy[i].y > 700) {
-						enemy[i].setLocation();
+						if (enemy[i].enemytype != 5) {
+							enemy[i].setLocation(false);
+						} else {
+							enemy[i].setLocation(true);
+						}
 					}
 					if (enemy[i].isAlive && remainingHearts != 0
 							&& enemy[i].getBounds().intersects(player.getBounds())) {
@@ -368,6 +377,8 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 										score += 100;
 									} else if (enemy[v].enemytype == 4) {
 										score += 200;
+									} else if (enemy[v].enemytype == 5) {
+										score += 1000;
 									}
 									enemy[v].isAlive = false;
 									countEnemy--;
@@ -438,6 +449,8 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 									score += 100;
 								} else if (enemy[v].enemytype == 4) {
 									score += 200;
+								} else if (enemy[v].enemytype == 5) {
+									score += 1000;
 								}
 								enemy[v].isAlive = false;
 								enemy[v].x = 2000;
@@ -452,12 +465,13 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 								}
 								shotmissiles[i].x = 2000;
 								shotmissiles[i].y = 2000;
-								 //shotmissiles[i].fired = false;
+								// shotmissiles[i].fired = false;
 
 							}
 						}
 					}
-					if (shotmissiles[i].x > 0 && shotmissiles[i].x < 900 && shotmissiles[i].y > 0 && shotmissiles[i].y < 635) {
+					if (shotmissiles[i].x > 0 && shotmissiles[i].x < 900 && shotmissiles[i].y > 0
+							&& shotmissiles[i].y < 635) {
 						shotmissiles[i].theta = Math.atan2(shotmissiles[i].y - (enemy[closerposition].y + 40),
 								shotmissiles[i].x - (enemy[closerposition].x + 50));
 						shotmissiles[i].y = shotmissiles[i].y - (int) (20 * Math.sin(shotmissiles[i].theta));
@@ -516,7 +530,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				strx = 900;
 				stry = 900;
 				secondss = 0;
-                                secondbefore = 0;
+				secondbefore = 0;
 				player.setTurboSpaceship();
 			}
 			if (remainingHearts == 0) {
@@ -531,13 +545,15 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				if (difficult > 0) {
 					if (nextLevel == 1)
 						reset(1, false);
-					if (nextLevel == 2)
+					else if (nextLevel == 2)
 						reset(2, false);
 
-					if (nextLevel == 3)
+					else if (nextLevel == 3)
 						reset(3, false);
-					if (nextLevel == 4) {
+					else if (nextLevel == 4) {
 						reset(4, false);
+					} else if (nextLevel == 5) {
+						reset(5, false);
 						difficult = 0;
 					}
 
@@ -689,7 +705,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				numberOfEnemies = easyNumberEnemies;
 				numberOfHearts = 3;
 				remainingHearts = numberOfHearts;
-                                numberOfMissiles = 3;
+				numberOfMissiles = 3;
 				remainingMissiles = numberOfMissiles;
 				numberOfMissilesToShot = 3;
 				seconds = 90;
@@ -708,7 +724,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				numberOfEnemies = normalNumberEnemies;
 				numberOfHearts = 3;
 				remainingHearts = numberOfHearts;
-                                numberOfMissiles = 3;
+				numberOfMissiles = 3;
 				remainingMissiles = numberOfMissiles;
 				numberOfMissilesToShot = 3;
 				seconds = 70;
@@ -727,7 +743,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				numberOfEnemies = hardNumberEnemies;
 				numberOfHearts = 3;
 				remainingHearts = numberOfHearts;
-                                numberOfMissiles = 3;
+				numberOfMissiles = 3;
 				remainingMissiles = numberOfMissiles;
 				numberOfMissilesToShot = 3;
 				seconds = 60;
@@ -789,6 +805,13 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 			for (j = 0; j < numberOfEnemies; j++) {
 				tipoEnemy[j] = 4;
 			}
+		} else if (level == 5) {
+			tipoEnemy[0] = 5;
+			int j;
+			for (j = 1; j < numberOfEnemies; j++) {
+				tipoEnemy[j] = 4;
+			}
+
 		}
 		for (int i = 0; i < numberOfEnemies; i++) {
 
@@ -807,6 +830,8 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				// }
 			} else if (tipoEnemy[i] == 4) {
 				enemy[i] = new Enemy(tipoEnemy[i]);
+			} else if (tipoEnemy[i] == 5) {
+				enemy[i] = new Enemy(tipoEnemy[i]);
 			}
 		}
 
@@ -817,13 +842,20 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 
 		for (int i = 0; i < numberOfEnemies; i++) {
 			enemy[i].isAlive = true;
-			enemy[i].setLocation();
+			if (enemy[i].enemytype != 5) {
+				enemy[i].setLocation(false);
+			} else {
+				enemy[i].setLocation(true);
+			}
+
 			if (enemy[i].enemytype == 1 || enemy[i].enemytype == 2) {
 				enemy[i].enemylife = 1;
 			} else if (enemy[i].enemytype == 3) {
 				enemy[i].enemylife = 3;
-			} else {
+			} else if (enemy[i].enemytype == 4) {
 				enemy[i].enemylife = 5;
+			} else {
+				enemy[i].enemylife = 20;
 			}
 
 		}
