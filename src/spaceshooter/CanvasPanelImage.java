@@ -549,7 +549,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				strx = 900;
 				stry = 900;
 				secondss = 0;
-				secondbefore = 0;
+                                secondbefore = 0;
 				player.setTurboSpaceship();
 			}
 			if (remainingHearts == 0) {
@@ -892,7 +892,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 			} else if (enemy[i].enemytype == 4) {
 				enemy[i].enemylife = 5;
 			} else {
-				enemy[i].enemylife = 20;
+				enemy[i].enemylife = 50;
 			}
 
 		}
