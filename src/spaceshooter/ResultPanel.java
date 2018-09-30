@@ -34,7 +34,7 @@ public class ResultPanel {
 			activated[i] = false;
 		}
 		for (int i = 0; i < 2; i++) {
-			point[i] = new Point(465, 200 + 81*i);
+			point[i] = new Point(375, 200 + 81*i);
 			rectangle[i] = new Rectangle(point[i], new Dimension(button_w,
 					button_h));
 		}
@@ -55,18 +55,18 @@ public class ResultPanel {
 		if(won){
 			g2d.setColor(Color.GREEN);
 			g2d.setFont(game.font);
-			g2d.drawString("You Have WON!", 250, 100);
+			g2d.drawString("You WON!", 320, 100);
 			g2d.setColor(Color.WHITE);
 			g2d.setFont(game.font);
 			//if(!painted) score = random.nextInt(10000);
-			g2d.drawString(String.valueOf(game.score), 400, 150);
+			g2d.drawString(String.valueOf(game.score), 400, 160);
 		}else{
 			g2d.setColor(Color.RED);
 			g2d.setFont(game.font);
-			g2d.drawString("You Have LOST!", 250, 100);
+			g2d.drawString("You LOST!", 320, 100);
 			g2d.setColor(Color.WHITE);
 			g2d.setFont(game.font);
-			g2d.drawString(String.valueOf(game.score), 400, 150);
+			g2d.drawString(String.valueOf(game.score), 400, 160);
 		}
 
 		for (int i = 0; i < 2; i++) {

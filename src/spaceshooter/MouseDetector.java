@@ -54,7 +54,7 @@ public class MouseDetector extends MouseAdapter implements MouseMotionListener {
                 if (game.gun == 2 && game.remainingMissiles > 0){
                 game.missiles[--game.remainingMissiles].setImage();
                  for (int i = 0; i < game.numberOfEnemies; i++) {
-                    if (game.enemy[i].x < closer && game.enemy[i].x >= game.player.x && game.enemy[i].x < 835){
+                    if (game.enemy[i].x < closer && game.enemy[i].x >= game.player.x && game.enemy[i].x < 700){
                         closer = game.enemy[i].x;
                         game.closerposition = i;
                     }

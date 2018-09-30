@@ -22,15 +22,18 @@ import javax.swing.JPanel;
  * @authors Iury, Vinicius and Daniel
  */
 public class CanvasPanelImage extends JPanel implements Runnable {
+	Boolean hitted = false;
+	long hittedTime = 0;
 	int closerposition;
 	int damage = 1;
 	int difficult = 0;
 	int nextLevel = 0;
-	int easyNumberEnemies = 10;
-	int normalNumberEnemies = 20;
-	int hardNumberEnemies = 40;
+	int easyNumberEnemies = 6;
+	int normalNumberEnemies = 12;
+	int hardNumberEnemies = 18;
 	int[] tipoEnemy;
 	long secondbefore = 0;
+	int bonusScore = 0;
 	int turbotime;
 	int thunderx = 900, thundery = 900;
 	int turbo = 1;
@@ -66,7 +69,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 	int speedOfEnemies = 0;
 	int numberOfEnemyBullets = 20;
 	int gun = 1;
-	int numberOfHearts = 8;
+	int numberOfHearts = 18;
 	int numberOfStars = 200;
 	int remainingHearts = numberOfHearts;
 	int numberOfSortMissiles = 10;
@@ -87,6 +90,8 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 	MouseDetector mouse;
 	Star[] stars;
 	Player player;
+	Graphics2D g2d;
+	
 
 	private long diff, start = System.currentTimeMillis();
 
@@ -314,22 +319,22 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 
 					// enemy[i].y = enemy[i].y
 					// - (int) (2 * Math.sin(enemy[i].theta));
-					if (enemy[i].enemytype == 1 || enemy[i].enemytype == 2) {
+					if (enemy[i].enemytype == 1 || enemy[i].enemytype == 2 || enemy[i].enemytype == 5) {
 						enemy[i].x = enemy[i].x - 1 - turbo - speedOfEnemies;
 					} else if (enemy[i].enemytype == 3) {
 						if (enemy[i].movement == 1) {
-							enemy[i].x = enemy[i].x - turbo - speedOfEnemies;
+							enemy[i].x = enemy[i].x - 2 * turbo - 2 * speedOfEnemies;
 							enemy[i].y = enemy[i].y + turbo + speedOfEnemies;
 						} else if (enemy[i].movement == 2) {
-							enemy[i].x = enemy[i].x - turbo - speedOfEnemies;
+							enemy[i].x = enemy[i].x - 2 * turbo - 2 * speedOfEnemies;
 							enemy[i].y = enemy[i].y - turbo - speedOfEnemies;
 						}
-					} else if (enemy[i].enemytype == 4 || enemy[i].enemytype == 5) {
+					} else if (enemy[i].enemytype == 4) {
 						if (enemy[i].movement == 1) {
-							enemy[i].x = enemy[i].x - turbo - speedOfEnemies;
+							enemy[i].x = enemy[i].x - 2 * turbo - 2 * speedOfEnemies;
 							enemy[i].y = enemy[i].y + turbo + speedOfEnemies;
 						} else if (enemy[i].movement == 2) {
-							enemy[i].x = enemy[i].x - turbo - speedOfEnemies;
+							enemy[i].x = enemy[i].x - 2 * turbo - 2 * speedOfEnemies;
 							enemy[i].y = enemy[i].y - turbo - speedOfEnemies;
 						}
 						if (enemy[i].y > enemy[i].initialpy + 50) {
@@ -347,7 +352,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 							}
 						}
 					}
-					if (enemy[i].x < -100 || enemy[i].y < -100 || enemy[i].y > 700) {
+					if (enemy[i].x < -200 || enemy[i].y < -100 || enemy[i].y > 700) {
 						if (enemy[i].enemytype != 5) {
 							enemy[i].setLocation(false);
 						} else {
@@ -356,9 +361,15 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 					}
 					if (enemy[i].isAlive && remainingHearts != 0
 							&& enemy[i].getBounds().intersects(player.getBounds())) {
-						enemy[i].isAlive = false;
-						countEnemy--;
-						hearts[--remainingHearts].setImage();
+						if (!hitted) {
+							enemy[i].isAlive = false;
+							countEnemy--;
+							hearts[--remainingHearts].setImage();
+							hitted = true;
+							hittedTime = System.currentTimeMillis();
+							player.x = 250 / 2 - 50;
+							player.y = 340 - 40;
+						}
 					}
 				}
 			}
@@ -370,15 +381,15 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 								enemy[v].enemylife = enemy[v].enemylife - damage;
 								if (enemy[v].enemylife <= 0) {
 									if (enemy[v].enemytype == 1) {
-										score += 10;
+										score += 10 + bonusScore;
 									} else if (enemy[v].enemytype == 2) {
-										score += 50;
+										score += 50 + bonusScore;
 									} else if (enemy[v].enemytype == 3) {
-										score += 100;
+										score += 100 + bonusScore;
 									} else if (enemy[v].enemytype == 4) {
-										score += 200;
+										score += 200 + bonusScore;
 									} else if (enemy[v].enemytype == 5) {
-										score += 1000;
+										score += 1000 + bonusScore;
 									}
 									enemy[v].isAlive = false;
 									countEnemy--;
@@ -408,8 +419,14 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 			for (int i = 0; i < numberOfEnemyBullets; i++) {
 				if (enemyBullets[i].fired) {
 					if (player.getBounds().intersects(enemyBullets[i].getBounds())) {
-						hearts[--remainingHearts].setImage();
-						enemyBullets[i].fired = false;
+						if (!hitted) {
+							hearts[--remainingHearts].setImage();
+							enemyBullets[i].fired = false;
+							hitted = true;
+							hittedTime = System.currentTimeMillis();
+							player.x = 250 / 2 - 50;
+							player.y = 340 - 40;
+						}
 					}
 					if (enemyBullets[i].x < -200 || enemyBullets[i].x > 1300 || enemyBullets[i].y < -200
 							|| enemyBullets[i].y > 1000) {
@@ -504,6 +521,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 						thundery = 900;
 						turbo = 1;
 						damage = 1;
+						bonusScore = 0;
 						thunder = false;
 						player.setBackSpaceship();
 					}
@@ -526,6 +544,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 			// }
 			if (key_states[KeyEvent.VK_SPACE] && thunder == true) {
 				damage = 5;
+				bonusScore = 100;
 				turbo = 5;
 				strx = 900;
 				stry = 900;
@@ -543,16 +562,23 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 			if (countEnemy == 0) {
 				nextLevel++;
 				if (difficult > 0) {
-					if (nextLevel == 1)
+					if (nextLevel == 1) {
+						remainingHearts = 3;
 						reset(1, false);
-					else if (nextLevel == 2)
+					}
+					else if (nextLevel == 2) {
+						remainingHearts = 3;
 						reset(2, false);
-
-					else if (nextLevel == 3)
+					}
+					else if (nextLevel == 3) {
+						remainingHearts = 3;
 						reset(3, false);
+					}
 					else if (nextLevel == 4) {
+						remainingHearts = 3;
 						reset(4, false);
 					} else if (nextLevel == 5) {
+						remainingHearts = 3;
 						reset(5, false);
 						difficult = 0;
 					}
@@ -566,6 +592,17 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 					resultPanel = true;
 				}
 
+			}
+
+			if (hitted) {
+				if (System.currentTimeMillis() - hittedTime > 2000) {
+					hitted = false;
+				}
+				if (hitted) {
+					//fazer a nave piscar player.blink();
+				
+				}
+			
 			}
 			if (key_states[KeyEvent.VK_W] && player.y > 0) {
 				player.y = player.y - 5;
@@ -837,7 +874,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 
 	}
 
-	public void reset(int level, boolean test) {
+	public void reset(int level, boolean first) {
 		newLevel(numberOfEnemies, level);
 
 		for (int i = 0; i < numberOfEnemies; i++) {
@@ -863,7 +900,16 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 			hearts[i].setHealth();
 		}
 
-		if (test == true) {
+		if (first == true) {
+			// resolver o bug que começava o novo nivel com turbo
+			thunderx = 900;
+			thundery = 900;
+			turbo = 1;
+			damage = 1;
+			bonusScore = 0;
+			thunder = false;
+			player.setBackSpaceship();
+			// -------------------------------------------------
 			for (int i = 0; i < numberOfBullets; i++) {
 				bullets1[i].fired = false;
 			}
@@ -881,7 +927,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 			for (int i = 0; i < numberOfMissiles; i++) {
 				missiles[i].setHealth();
 			}
-			player.x = 1080 / 2 - 50;
+			player.x = 250 / 2 - 50;
 			player.y = 340 - 40;
 			nextLevel = 0;
 		}
