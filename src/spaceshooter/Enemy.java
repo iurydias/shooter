@@ -53,6 +53,7 @@ public class Enemy {
 				image = new ImageIcon(this.getClass().getResource("boss2.gif")).getImage();
 				enemytype = 5;
 				enemylife = 10;
+                                movement = 1;
 				setLocation(true);
 			}
 		}

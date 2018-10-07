@@ -91,7 +91,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 	Star[] stars;
 	Player player;
 	Graphics2D g2d;
-	
+	int bossdx = 2, bossdy = 2;
 
 	private long diff, start = System.currentTimeMillis();
 
@@ -319,7 +319,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 
 					// enemy[i].y = enemy[i].y
 					// - (int) (2 * Math.sin(enemy[i].theta));
-					if (enemy[i].enemytype == 1 || enemy[i].enemytype == 2 || enemy[i].enemytype == 5) {
+					if (enemy[i].enemytype == 1 || enemy[i].enemytype == 2)  {
 						enemy[i].x = enemy[i].x - 1 - turbo - speedOfEnemies;
 					} else if (enemy[i].enemytype == 3) {
 						if (enemy[i].movement == 1) {
@@ -348,15 +348,58 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 							if (enemy[i].movement == 1) {
 								enemy[i].movement = 2;
 							} else {
-								enemy[i].movement = 1;
-							}
-						}
-					}
-					if (enemy[i].x < -200 || enemy[i].y < -100 || enemy[i].y > 700) {
-						if (enemy[i].enemytype != 5) {
-							enemy[i].setLocation(false);
-						} else {
-							enemy[i].setLocation(true);
+				                                            enemy[i].movement = 1;
+                                            }
+                                        }
+                                    } if (enemy[i].enemytype == 5){
+                                        if (enemy[i].movement == 1) {
+                                            enemy[i].x = enemy[i].x - 1 - turbo - speedOfEnemies;
+                                        }else if (enemy[i].movement == 2){
+                                            enemy[i].x = enemy[i].x + turbo + speedOfEnemies;
+					    enemy[i].y = enemy[i].y - turbo - speedOfEnemies;
+                                        }else if (enemy[i].movement == 3){
+                                             enemy[i].x = enemy[i].x + turbo + speedOfEnemies;
+					    enemy[i].y = enemy[i].y + turbo + speedOfEnemies;
+                                        }else if (enemy[i].movement == 4){
+                                             enemy[i].x = enemy[i].x - turbo - speedOfEnemies;
+					    enemy[i].y = enemy[i].y + turbo + speedOfEnemies;
+                                        }else if (enemy[i].movement == 5){
+                                             enemy[i].x = enemy[i].x - turbo - speedOfEnemies;
+					    enemy[i].y = enemy[i].y - turbo - speedOfEnemies;
+                                        }
+                                        
+                                        if(enemy[i].x == 0 && enemy[i].movement == 1){
+                                            enemy[i].movement = 2;
+                                        }
+                                        if(enemy[i].x == 0 && enemy[i].movement == 5){
+                                            enemy[i].movement = 2;
+                                        }
+                                        if(enemy[i].x == 0 && enemy[i].movement == 4){
+                                            enemy[i].movement = 3;
+                                        }
+                                        if(enemy[i].y == 0 && enemy[i].movement == 2){
+                                            enemy[i].movement = 3;
+                                        }
+                                         if(enemy[i].y == 0 && enemy[i].movement == 5){
+                                            enemy[i].movement = 4;
+                                        }
+                                        if(enemy[i].x > 700 && enemy[i].movement == 3){
+                                            enemy[i].movement = 4;
+                                        }
+                                         if(enemy[i].y > 500 && enemy[i].movement == 3){
+                                            enemy[i].movement = 4;
+                                        }
+                                        if(enemy[i].y > 500 && enemy[i].movement == 4){
+                                            enemy[i].movement = 5;
+                                        }
+                                        System.out.println(enemy[i].x);
+                                        System.out.println(enemy[i].y);
+                                    }
+                                    if (enemy[i].x < -200 || enemy[i].y < -100 || enemy[i].y > 700) {
+                                        if (enemy[i].enemytype != 5) {
+                                            enemy[i].setLocation(false);
+                                        } else {
+                                         			enemy[i].setLocation(true);
 						}
 					}
 					if (enemy[i].isAlive && remainingHearts != 0
@@ -901,7 +944,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 		}
 
 		if (first == true) {
-			// resolver o bug que começava o novo nivel com turbo
+			// resolver o bug que comeï¿½ava o novo nivel com turbo
 			thunderx = 900;
 			thundery = 900;
 			turbo = 1;
