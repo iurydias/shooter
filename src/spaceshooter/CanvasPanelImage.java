@@ -22,8 +22,11 @@ import javax.swing.JPanel;
  * @authors Iury, Vinicius and Daniel
  */
 public class CanvasPanelImage extends JPanel implements Runnable {
+	int closer = Integer.MAX_VALUE;
 	Boolean hitted = false;
+	boolean lop = false;
 	long hittedTime = 0;
+	boolean ert = false, verif = false;
 	int closerposition;
 	int damage = 1;
 	int difficult = 0;
@@ -348,8 +351,8 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 							if (enemy[i].movement == 1) {
 								enemy[i].movement = 2;
 							} else {
-				                                            enemy[i].movement = 1;
-                                            }
+				                      enemy[i].movement = 1;
+                                  }
                                         }
                                     } if (enemy[i].enemytype == 5){
                                         if (enemy[i].movement == 1) {
@@ -495,22 +498,55 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 
 				}
 			}
-
+			if (ert==true) {
+            for (int i = 0; i < numberOfEnemies; i++) {
+              	 if (enemy[i].x < closer && enemy[i].x >= player.x && enemy[i].x < 900 && enemy[i].y > 0 && enemy[i].y < 700  && enemy[i].isAlive){
+                      closer = enemy[i].x;
+                      closerposition = i;
+                      lop = true;
+                   }
+               }if(lop == true) {
+            	   verif = true;
+            	   lop = false;
+            	   addBullet(1);
+            	   missiles[--remainingMissiles].setImage();
+               }
+			}
+            ert = false;
+            int closer = Integer.MAX_VALUE;
+            if(verif == true) {
+            	
 			for (int i = 0; i < numberOfMissilesToShot; i++) {
+				
 				if (shotmissiles[i].fired) {
+					
+					if (shotmissiles[i].x > 0 && shotmissiles[i].x < 900 && shotmissiles[i].y > 0 && shotmissiles[i].y < 635) {
+						shotmissiles[i].theta = Math.atan2(shotmissiles[i].y - (enemy[closerposition].y + 40),
+						shotmissiles[i].x - (enemy[closerposition].x + 50));
+						shotmissiles[i].y = shotmissiles[i].y - (int) (20 * Math.sin(shotmissiles[i].theta));
+						shotmissiles[i].x = shotmissiles[i].x - (int) (20 * Math.cos(shotmissiles[i].theta));
+						
+						
+					}
+					
 					for (int v = 0; v < numberOfEnemies; v++) {
 						if (enemy[v].isAlive) {
 							if (enemy[v].getBounds().intersects(shotmissiles[i].getBounds())) {
 								if (enemy[v].enemytype == 1) {
 									score += 10;
+									verif = false;
 								} else if (enemy[v].enemytype == 2) {
 									score += 50;
+									verif = false;
 								} else if (enemy[v].enemytype == 3) {
 									score += 100;
+									verif = false;
 								} else if (enemy[v].enemytype == 4) {
 									score += 200;
+									verif = false;
 								} else if (enemy[v].enemytype == 5) {
 									score += 1000;
+									verif = false;
 								}
 								enemy[v].isAlive = false;
 								enemy[v].x = 2000;
@@ -530,17 +566,13 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 							}
 						}
 					}
-					if (shotmissiles[i].x > 0 && shotmissiles[i].x < 900 && shotmissiles[i].y > 0
-							&& shotmissiles[i].y < 635) {
-						shotmissiles[i].theta = Math.atan2(shotmissiles[i].y - (enemy[closerposition].y + 40),
-								shotmissiles[i].x - (enemy[closerposition].x + 50));
-						shotmissiles[i].y = shotmissiles[i].y - (int) (20 * Math.sin(shotmissiles[i].theta));
-						shotmissiles[i].x = shotmissiles[i].x - (int) (20 * Math.cos(shotmissiles[i].theta));
-					}
+
 					// shotmissiles[i].x = shotmissiles[i].x + 1 * 10;
 				}
+				
 			}
-
+			
+            }
 			if (timeForBullet % seconds == 0) {
 				int rand = (int) (Math.random() * numberOfEnemies);
 				if (enemy[rand].isAlive) {
