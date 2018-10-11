@@ -14,14 +14,16 @@ public class Bullet {
 
     public Bullet(int x, int y, double theta) {
         if (image == null) {
-            image = new ImageIcon(this.getClass().getResource("bullet2.png")).getImage();
+            image = new ImageIcon(this.getClass().getResource("player_shoot.png")).getImage();
         }
 
     }
 
     public Bullet(int i) {
         if (image == null && i == 1) {
-            image = new ImageIcon(this.getClass().getResource("bullet3.png")).getImage();
+            image = new ImageIcon(this.getClass().getResource("missile_fired.png")).getImage();
+        }else if(image == null && i == 2){
+            image = new ImageIcon(this.getClass().getResource("enemy_shoot.png")).getImage();
         }else{
                 image = new ImageIcon(this.getClass().getResource("missile.png")).getImage();
         }

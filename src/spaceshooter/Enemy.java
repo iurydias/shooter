@@ -23,14 +23,6 @@ public class Enemy {
 	int min = 1;
 	int diff = max - min;
 
-	// public Enemy() {
-	// if (image == null) {
-	// image = new ImageIcon(this.getClass().getResource("enemy1.png")).getImage();
-	// }
-	// enemytype = 1;
-	// enemylife = 1;
-	// setLocation();
-	// }
 	public Enemy(int i) {
 		if (image == null) {
 			if (i == 1) {
@@ -56,6 +48,11 @@ public class Enemy {
                                 movement = 1;
 				setLocation(true);
 			}
+                        else if (i == 6) {
+				image = new ImageIcon(this.getClass().getResource("enemy5.png")).getImage();
+				enemytype = 6;
+				enemylife = 6;
+			}
 		}
 		if (i != 5) {
 			setLocation(false);
@@ -76,13 +73,9 @@ public class Enemy {
 			y = 200;
 		} else {
 			int i, j, n, m;
-			// i = (int) (Math.random() * 2 + 1);
 			j = (int) (Math.random() * 2 + 1);
-			// if (i == 1) {
 			x = (int) (Math.random() * 500 + 900);
-			// } else {
-			// x = (int) (Math.random() * 220 + 811);
-			// }
+
 			if (j == 1) {
 				y = (int) (Math.random() * 300 + 1);
 				if (enemytype == 3 || enemytype == 4) {
@@ -116,37 +109,6 @@ public class Enemy {
 			}
 		}
 
-//		n = ((int) (Math.random() * 245));
-//		m = ((int) (Math.random() * 140));
-//		i = ((int) (Math.random() * 4)) + 1;
-//		j = ((int) (Math.random() * 4)) + 1;
-//
-//		if (i == 2 && j == 2 || i == 2 && j == 3 || i == 3 && j == 2 || i == 3
-//				&& j == 3) {
-//
-//			int l = ((int) (Math.random()));
-//
-//			if (l == 0) {
-//
-//				l = ((int) (Math.random()));
-//				if (l == 0)
-//					i = 1;
-//				else
-//					i = 4;
-//
-//			} else {
-//
-//				l = ((int) (Math.random()));
-//				if (l == 0)
-//					j = 1;
-//				else
-//					j = 4;
-//
-//			}
-//		}
-//
-//		x = n * i;
-//		y = m * j;
 	}
 
 }

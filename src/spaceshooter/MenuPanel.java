@@ -28,6 +28,7 @@ public class MenuPanel {
 	boolean[] activated = new boolean[7];
 	Point[] point = new Point[7];
 	Image image;
+        Image background;
 	int button_w = 150;
 	int button_h = 50;
 	CanvasPanelImage game;
@@ -51,7 +52,8 @@ public class MenuPanel {
 
 		}
 
-			image = new ImageIcon(this.getClass().getResource("button.jpg")).getImage();
+			image = new ImageIcon(this.getClass().getResource("button2.png")).getImage();
+                        background = new ImageIcon(this.getClass().getResource("solarsystem_background.png")).getImage();
 		
 
 		this.game = game;
@@ -59,7 +61,7 @@ public class MenuPanel {
 	}
 
 	public void draw(Graphics2D g2d) {
-		g2d.drawImage(game.backGround, 0, 0, null);
+		g2d.drawImage(background, 0, 0, null);
 		g2d.drawImage(game.opacity, 0, 0, null);
 		g2d.setColor(Color.BLUE);
 		g2d.setFont(game.font);
@@ -84,15 +86,15 @@ public class MenuPanel {
 			
 			g2d.setColor(Color.WHITE);
 			g2d.drawString("Easy", 93, 316);
-			g2d.drawString("Normal", 80, 397);
+			g2d.drawString("Normal", 93, 397);
 			g2d.drawString("Hard", 93, 478);
 
 		}
 		g2d.setColor(Color.white);
 		g2d.drawString("Play", 90, 235);
 		g2d.drawString("Help", 365, 235);
-		g2d.drawString("About", 630, 235);
-		g2d.drawString("Exit", 905, 235);
+		g2d.drawString("About", 640, 235);
+		g2d.drawString("Exit", 915, 235);
 
 	}
 
