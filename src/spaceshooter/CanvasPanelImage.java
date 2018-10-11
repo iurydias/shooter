@@ -22,7 +22,7 @@ import javax.swing.JPanel;
  * @authors Iury, Vinicius and Daniel
  */
 public class CanvasPanelImage extends JPanel implements Runnable {
-	int closer = Integer.MAX_VALUE;
+	int closerXY = Integer.MAX_VALUE;
 	Boolean hitted = false;
 	boolean lop = false;
 	long hittedTime = 0;
@@ -64,7 +64,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 	int speedOfBullets = 20;
 	int timeForBullet = 1;
 	int seconds = 60;
-	double theta;
+	double theta , smXY;
 	double px = 0, py = 0;
 	int numberOfEnemies = 160;
 	int countEnemy = numberOfEnemies;
@@ -172,7 +172,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				for (int i = 0; i < numberOfMissilesToShot; i++) {
 					if (shotmissiles[i].fired) {
 						g2d.drawImage(shotmissiles[i].getImage(), shotmissiles[i].x, shotmissiles[i].y, null);
-						// 140, 60
+						// 
 					}
 				}
 				// carregando as imagens dos inimigos
@@ -223,7 +223,7 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 
 		bullets1 = new Bullet[numberOfBullets];
 		for (int i = 0; i < numberOfBullets; i++) {
-			bullets1[i] = new Bullet(210, 200, 0);
+			bullets1[i] = new Bullet(200, 210, 0);
 		}
 		sortmissiles = new Missile[numberOfSortMissiles];
 		for (int i = 0; i < numberOfSortMissiles; i++) {
@@ -499,21 +499,27 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 				}
 			}
 			if (ert==true) {
-            for (int i = 0; i < numberOfEnemies; i++) {
-              	 if (enemy[i].x < closer && enemy[i].x >= player.x && enemy[i].x < 900 && enemy[i].y > 0 && enemy[i].y < 700  && enemy[i].isAlive){
-                      closer = enemy[i].x;
+			closerXY = Integer.MAX_VALUE;
+			for (int i = 0; i < numberOfEnemies; i++) {
+            	if(enemy[i].x >= player.x && enemy[i].x < 900 && enemy[i].y > 0 && enemy[i].y < 700  && enemy[i].isAlive) {
+            		smXY = Math.abs(player.y - enemy[i].y) + Math.abs(player.x - enemy[i].x);
+            		if (smXY < closerXY){
+                      closerXY = (int)smXY;
                       closerposition = i;
                       lop = true;
                    }
+            	}
                }if(lop == true) {
             	   verif = true;
             	   lop = false;
             	   addBullet(1);
             	   missiles[--remainingMissiles].setImage();
+            	   
                }
+               ert = false;
 			}
-            ert = false;
-            int closer = Integer.MAX_VALUE;
+            
+            
             if(verif == true) {
             	
 			for (int i = 0; i < numberOfMissilesToShot; i++) {
@@ -535,18 +541,23 @@ public class CanvasPanelImage extends JPanel implements Runnable {
 								if (enemy[v].enemytype == 1) {
 									score += 10;
 									verif = false;
+									
 								} else if (enemy[v].enemytype == 2) {
 									score += 50;
 									verif = false;
+									ert = false;
 								} else if (enemy[v].enemytype == 3) {
 									score += 100;
 									verif = false;
+									
 								} else if (enemy[v].enemytype == 4) {
 									score += 200;
 									verif = false;
+									
 								} else if (enemy[v].enemytype == 5) {
 									score += 1000;
 									verif = false;
+									
 								}
 								enemy[v].isAlive = false;
 								enemy[v].x = 2000;

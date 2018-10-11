@@ -55,7 +55,7 @@ public class MouseDetector extends MouseAdapter implements MouseMotionListener {
             		game.addBullet(1);
             	}
             	
-                if (game.gun == 2 && game.remainingMissiles > 0 && game.ert == false){
+                if (game.gun == 2 && game.remainingMissiles > 0 && game.verif == false){
                 		game.ert = true;
                 		
                 }
